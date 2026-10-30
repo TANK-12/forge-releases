@@ -2,17 +2,17 @@
 
 One window for many small local apps: games, creative tools, readers and research helpers, each its own little web server.
 
-This repository holds only built files: the installers (release v0.2.4) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.2.5) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.2.4.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.2.4/Forge-Web-Setup-0.2.4.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.2.4.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.2.4/Forge-Setup-0.2.4.exe) (159 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.2.5.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.2.5/Forge-Web-Setup-0.2.5.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.2.5.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.2.5/Forge-Setup-0.2.5.exe) (163 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [forge-get-0.2.4-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.2.4/forge-get-0.2.4-linux-x64.sh) (11 kB): Small installer script: downloads only the apps you pick
-- [forge-0.2.4-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.2.4/forge-0.2.4-linux-x64.tar.gz) (229 MB): Full download: unpack, then run ./Forge/forge --install
+- [forge-get-0.2.5-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.2.5/forge-get-0.2.5-linux-x64.sh) (13 kB): Small installer script: downloads only the apps you pick
+- [forge-0.2.5-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.2.5/forge-0.2.5-linux-x64.tar.gz) (242 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Updates
 
