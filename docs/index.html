@@ -1,17 +1,34 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Forge 0.2.6: download</title>
+<title>Forge 0.2.7: download</title>
 <style>
 body{font:16px/1.5 system-ui,sans-serif;max-width:46rem;margin:2rem auto;padding:0 1rem;color:#222;background:#fafafa}
 h1{margin-bottom:.2rem} .dl{background:#fff;border:1px solid #ddd;border-radius:8px;padding:.7rem 1rem}
 .dl a{font-weight:600} .dl span{color:#666} code{font-size:.75rem;color:#555;word-break:break-all}
-@media (prefers-color-scheme:dark){body{background:#16181c;color:#ddd}.dl{background:#1f2227;border-color:#333}code,.dl span{color:#aaa}a{color:#8ab4f8}}
+.picks{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0} .pick{display:block;padding:.7rem 1.1rem;border-radius:8px;background:#1f6f4a;color:#fff;font-weight:600;text-decoration:none}
+.pick span{display:block;font-weight:400;font-size:.85rem;opacity:.85} .pick[hidden]{display:none} details summary{cursor:pointer}
+@media (prefers-color-scheme:dark){body{background:#16181c;color:#ddd}.dl{background:#1f2227;border-color:#333}code,.dl span{color:#aaa}a{color:#8ab4f8}.pick{background:#2f8f63;color:#fff}}
 </style></head><body>
 <h1>Forge</h1>
-<p>One window for many small local apps: games, creative tools, readers and research helpers, each its own little web server.</p>
-<p>Version 0.2.6.</p>
-<h2>Windows 10 and 11</h2><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.6/Forge-Web-Setup-0.2.6.exe">Forge-Web-Setup-0.2.6.exe</a> <span>3 MB</span><br>Small setup: downloads only the apps you pick<br><code>sha256 85117e150ed32ac940c6d861fa4619301476a4cd6ff418fb2944f246aabbd155</code></p><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.6/Forge-Setup-0.2.6.exe">Forge-Setup-0.2.6.exe</a> <span>163 MB</span><br>Full setup: everything in one file, installs offline<br><code>sha256 193f0ac2e49316a6c9361c9e39787d1204de80e7f96d5d48146661d6ba55b540</code></p><h2>Linux (x64)</h2><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.6/forge-get-0.2.6-linux-x64.sh">forge-get-0.2.6-linux-x64.sh</a> <span>13 kB</span><br>Small installer script: downloads only the apps you pick<br><code>sha256 9a652108c8b198f3d63b61599ec9b5a626e068a4295849908ef8f011c6407dda</code></p><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.6/forge-0.2.6-linux-x64.tar.gz">forge-0.2.6-linux-x64.tar.gz</a> <span>242 MB</span><br>Full download: unpack, then run ./Forge/forge --install<br><code>sha256 86b57bcca9120ef8060a27a994137ed50fe716918971f6e8083e5edb35caee7b</code></p>
-<h2>Installing</h2><p>Windows: run the setup. It needs no administrator rights. Windows may warn that the program is not signed yet: choose More info, then Run anyway.</p><p>Linux small installer: <code>sh forge-get-0.2.6-linux-x64.sh</code> (add <code>--apps a,b</code> for only some apps).</p>
-<h2>Updates</h2><p>Forge checks this page&#x27;s release for updates: Settings, Updates (or right-click an app) updates one app or all of Forge, downloads only what changed and puts the old files back if anything fails. Your settings and saves are kept apart from the program and are never touched by an update.</p>
+<p>Free apps for your own computer, in one window: games, creative tools, readers and study helpers. No account, and most work offline.</p>
+<p>Version 0.2.7.</p>
+<div class="picks"><a class="pick" data-system="windows" href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.7/Forge-Web-Setup-0.2.7.exe">Download for Windows, 3 MB<span>Small setup: downloads only the apps you pick</span></a><a class="pick" data-system="linux" href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.7/forge-get-0.2.7-linux-x64.sh">Download for Linux, 13 kB<span>Small installer script: downloads only the apps you pick</span></a><a class="pick" data-system="android" href="https://github.com/TANK-12/forge-android/releases/download/v0.2/forge.apk">Download for Android<span>A phone app for Android that looks good upright or sideways and links to Forge on your computer once you sign in.</span></a></div>
+<script>// shows only the button for this computer's system (critic review item 38);
+// with no script, or a system with no download, every button stays
+(() => {
+  const box = document.currentScript.previousElementSibling;
+  const ua = navigator.userAgent.toLowerCase();
+  const p = ((navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "").toLowerCase();
+  const mine = /android/.test(ua) ? "android" : /iphone|ipad/.test(ua) ? "" : /win/.test(p) ? "windows" : /mac/.test(p) ? "macos" : /linux|x11/.test(p) ? "linux" : "";
+  const picks = [...box.querySelectorAll("[data-system]")];
+  if (!picks.some((a) => a.dataset.system === mine)) return;
+  for (const a of picks) a.hidden = a.dataset.system !== mine;
+})();</script>
+<details><summary>All downloads and their sha256</summary>
+<h3>Windows 10 and 11</h3><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.7/Forge-Web-Setup-0.2.7.exe">Forge-Web-Setup-0.2.7.exe</a> <span>3 MB</span><br>Small setup: downloads only the apps you pick<br><details><summary>sha256</summary><code>65c13e8920e254e3db42e3c23c1dacd8879f97bc13185d08c6c663f41c1d3a97</code></details></p><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.7/Forge-Setup-0.2.7.exe">Forge-Setup-0.2.7.exe</a> <span>169 MB</span><br>Full setup: everything in one file, installs offline<br><details><summary>sha256</summary><code>f4bb4f1dc2470d79e955306dee9d7d21157f638f50f0434503ae969419ccd2d6</code></details></p><h3>Linux (x64)</h3><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.7/forge-get-0.2.7-linux-x64.sh">forge-get-0.2.7-linux-x64.sh</a> <span>13 kB</span><br>Small installer script: downloads only the apps you pick<br><details><summary>sha256</summary><code>665452887f36ce44279a8720ce62a29d86add6cf30454c501acd48f88b84c87a</code></details></p><p class="dl"><a href="https://github.com/TANK-12/forge-releases/releases/download/v0.2.7/forge-0.2.7-linux-x64.tar.gz">forge-0.2.7-linux-x64.tar.gz</a> <span>246 MB</span><br>Full download: unpack, then run ./Forge/forge --install<br><details><summary>sha256</summary><code>24988f2ba5ae63cfbecd8a7317ec5cd164c5960d6f85b25c3b6efeb846561ae3</code></details></p><h3>Android 8.0 or newer</h3><p class="dl"><a href="https://github.com/TANK-12/forge-android/releases/download/v0.2/forge.apk">forge.apk</a><br>A phone app for Android that looks good upright or sideways and links to Forge on your computer once you sign in.<br>Android · first build, not yet tested on a phone The APK comes from GitHub Releases. Android asks once to allow installs from your browser.</p>
+</details>
+<h2>Installing</h2><p>Installing Forge needs no administrator rights; if an app you choose needs a system permission (today only Power, to change power modes on Linux), Forge asks once at the end of its first-run setup, and Settings, Permissions changes it later.</p><p>Windows: run the setup. Windows may warn that the program is not signed yet: choose More info, then Run anyway.</p><p>Linux small installer: <code>sh forge-get-0.2.7-linux-x64.sh</code> (add <code>--apps a,b</code> for only some apps).</p>
+<h2>Updates</h2><p>Forge looks for updates only when you press Check for updates in Settings, Updates; it never looks at the update list by itself. From there (or right-click an app) it updates one app or all of Forge, downloads only what changed and puts the old files back if anything fails. Your settings and saves are kept apart from the program and are never touched by an update.</p>
+<p>If an app turns out to be unsafe or broken, the signed update list can mark it withdrawn. The next time you check for updates, Forge stops that app, takes out its program files and tells you why. Your own files and saves in it are never touched, and a Forge that never checks for updates is never changed.</p>
 </body></html>
