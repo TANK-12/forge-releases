@@ -2,7 +2,7 @@
 
 ![Forge](https://openzenith.app/store/media/cosmos/1-card.webp)
 
-Free apps for your own computer, in one window: games, creative tools, readers and study helpers. No account, and most work offline.
+Free apps for your own computer, in one window: files and storage, office work, creative tools, readers and study helpers. No account, and most work offline.
 
 Website: https://openzenith.app/
 
