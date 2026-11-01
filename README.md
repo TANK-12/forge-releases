@@ -8,24 +8,24 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.3.1) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.3.2) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.3.1.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/Forge-Web-Setup-0.3.1.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.3.1.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/Forge-Setup-0.3.1.exe) (177 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.3.2.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/Forge-Web-Setup-0.3.2.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.3.2.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/Forge-Setup-0.3.2.exe) (177 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [forge-get-0.3.1-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/forge-get-0.3.1-linux-x64.sh) (9 kB): Small installer script: downloads only the apps you pick
-- [forge-0.3.1-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/forge-0.3.1-linux-x64.tar.gz) (254 MB): Full download: unpack, then run ./Forge/forge --install
+- [forge-get-0.3.2-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-get-0.3.2-linux-x64.sh) (9 kB): Small installer script: downloads only the apps you pick
+- [forge-0.3.2-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-0.3.2-linux-x64.tar.gz) (254 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## macOS 13 or newer
 
 The Mac downloads are built and checked on Linux only and have not been tried on a real Mac yet.
 
-- [forge-0.3.1-macos-arm64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/forge-0.3.1-macos-arm64.tar.gz) (240 MB): For Apple silicon Macs (M1 and newer): unpack, then drag Forge.app into Applications
-- [forge-0.3.1-macos-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/forge-0.3.1-macos-x64.tar.gz) (242 MB): For Intel Macs: unpack, then drag Forge.app into Applications
+- [forge-0.3.2-macos-arm64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-0.3.2-macos-arm64.tar.gz) (240 MB): For Apple silicon Macs (M1 and newer): unpack, then drag Forge.app into Applications
+- [forge-0.3.2-macos-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-0.3.2-macos-x64.tar.gz) (242 MB): For Intel Macs: unpack, then drag Forge.app into Applications
 
 ## Android 8.0 or newer
 
@@ -33,7 +33,7 @@ The Mac downloads are built and checked on Linux only and have not been tried on
 
 ## Phones
 
-There is nothing to download for a phone. On the computer, open Devices, Phones and switch on Phone link; then open the address it shows in the phone's browser, type the pairing code and add the page to the home screen. The phone and the computer must be on the same Wi-Fi. The phone's browser first warns that the connection is not private, because the computer makes its own certificate: check the address is the one Devices shows, then go on to it. Not yet tried on a real phone.
+Or skip the app and use the phone's browser. On the computer, open Devices, Phones and switch on Phone link; then open the address it shows in the phone's browser, type the pairing code and add the page to the home screen. The phone and the computer must be on the same Wi-Fi. The phone's browser first warns that the connection is not private, because the computer makes its own certificate: check the address is the one Devices shows, then go on to it. Not yet tried on a real phone.
 
 ## Updates
 
