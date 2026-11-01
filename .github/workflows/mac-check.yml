@@ -1,0 +1,31 @@
+# Test-only: runs a Forge Mac download on GitHub's Mac runners (Relay task 678).
+# Lives on the mac-check branch only; main and the download page are untouched.
+name: Mac check
+on:
+  push:
+    branches: [mac-check]
+  workflow_dispatch:
+permissions:
+  contents: write  # needed only to read a draft (unpublished) release
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-latest, target: macos-arm64 }
+          - { os: macos-15-intel, target: macos-x64 }
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check the download
+        run: bash mac-check/check.sh ${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mac-check-${{ matrix.target }}
+          path: out
+          retention-days: 7
