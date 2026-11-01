@@ -5,7 +5,8 @@
 # Results: out/results.txt (PASS/FAIL/INFO lines) plus logs and screenshots.
 set -u
 target=$1
-tag=$(cat mac-check/tag.txt)
+# tag.txt: one line per target, "<target> <release tag>"
+tag=$(awk -v t="$target" '$1 == t {print $2}' mac-check/tag.txt)
 out=$PWD/out
 mkdir -p "$out"
 res=$out/results.txt
@@ -100,7 +101,7 @@ limit 120 xattr -dr com.apple.quarantine /Applications/Forge.app
 note "INFO quarantine left after xattr -dr: $(xattr -lr /Applications/Forge.app 2>/dev/null | grep -c quarantine)"
 mkdir -p "$work/home-smoke"
 step "smoke"
-check smoke env HOME="$work/home-smoke" limit 1500 /Applications/Forge.app/Contents/MacOS/Forge --smoke --window none --report "$out/smoke.json"
+check smoke limit 1500 env HOME="$work/home-smoke" /Applications/Forge.app/Contents/MacOS/Forge --smoke --window none --report "$out/smoke.json"
 tail -8 "$out/smoke.log" | sed 's/^/INFO smoke: /' >>"$res"
 stop_forge
 
@@ -142,7 +143,7 @@ note "INFO dmg $(stat -f %z "$work/Forge.dmg" 2>/dev/null) bytes"
 mnt=$(limit 300 hdiutil attach -nobrowse -readonly "$work/Forge.dmg" | awk -F'\t' '/\/Volumes\//{print $NF}')
 note "INFO dmg mounted at $mnt"
 mkdir -p "$work/home-dmg"
-check smoke-from-dmg env HOME="$work/home-dmg" limit 600 "$mnt/Forge.app/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files --report "$out/smoke-dmg.json"
+check smoke-from-dmg limit 600 env HOME="$work/home-dmg" "$mnt/Forge.app/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files --report "$out/smoke-dmg.json"
 hdiutil detach "$mnt" >/dev/null 2>&1 || true
 
 # 7. ad hoc signature with the hardened runtime and Forge's entitlements
@@ -164,5 +165,5 @@ check sign-app codesign --force -s - --options runtime --entitlements "$work/ent
 check sign-verify codesign --verify --deep --strict --verbose=2 "$signed"
 mkdir -p "$work/home-signed"
 step "hardened"
-check smoke-hardened env HOME="$work/home-signed" limit 600 "$signed/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files,media,convert --report "$out/smoke-hardened.json"
+check smoke-hardened limit 600 env HOME="$work/home-signed" "$signed/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files,media,convert --report "$out/smoke-hardened.json"
 note "INFO done"

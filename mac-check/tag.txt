@@ -1,1 +1,2 @@
-mac-check-678
+macos-arm64 mac-check-678
+macos-x64 v0.3.3
