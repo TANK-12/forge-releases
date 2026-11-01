@@ -35,7 +35,12 @@ note "INFO gatekeeper: $(spctl --status 2>&1)"
 work=$RUNNER_TEMP/forge
 mkdir -p "$work"
 cd "$work"
-gh release download "$tag" -R "$GITHUB_REPOSITORY" -p "forge-*-$target.tar.gz" || { note "FAIL download"; exit 1; }
+if ! gh release download "$tag" -R "$GITHUB_REPOSITORY" -p "forge-*-$target.tar.gz"; then
+    # a draft has no tag yet: find it in the list of releases
+    asset=$(gh api "repos/$GITHUB_REPOSITORY/releases" --jq ".[] | select(.tag_name == \"$tag\") | .assets[] | select(.name | endswith(\"-$target.tar.gz\")) | \"\(.id) \(.name)\"" | head -1)
+    [ -n "$asset" ] || { note "FAIL download (no $target asset in $tag)"; exit 1; }
+    gh api -H "Accept: application/octet-stream" "repos/$GITHUB_REPOSITORY/releases/assets/${asset%% *}" >"${asset#* }" || { note "FAIL download"; exit 1; }
+fi
 tarball=$(ls forge-*-"$target".tar.gz)
 note "INFO $tarball $(stat -f %z "$tarball") bytes"
 # what Safari puts on a download
@@ -56,6 +61,13 @@ app=$work/Forge/Forge.app
 note "INFO quarantine on the app's launcher: $(xattr -p com.apple.quarantine "$app/Contents/MacOS/Forge" 2>&1)"
 note "INFO quarantine on runtime python: $(xattr -p com.apple.quarantine "$app/Contents/Resources/forge/runtime/bin/python3" 2>&1)"
 check plist plutil -lint "$app/Contents/Info.plist"
+icon=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIconFile" "$app/Contents/Info.plist" 2>/dev/null)
+if [ -n "$icon" ]; then
+    check icon-iconutil iconutil -c iconset -o "$out/forge.iconset" "$app/Contents/Resources/$icon.icns"
+    limit 60 sips -s format png "$app/Contents/Resources/$icon.icns" --out "$out/icon-from-icns.png" >/dev/null 2>&1 || true
+else
+    note "INFO no CFBundleIconFile"
+fi
 ls -la "$app/Contents" "$app/Contents/MacOS" >"$out/layout.log" 2>&1
 
 # 2. signatures of every Mach-O file (Apple silicon kills an unsigned one)
