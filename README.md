@@ -27,6 +27,10 @@ The Mac downloads are built and checked on Linux only and have not been tried on
 - [forge-0.3.1-macos-arm64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/forge-0.3.1-macos-arm64.tar.gz) (240 MB): For Apple silicon Macs (M1 and newer): unpack, then drag Forge.app into Applications
 - [forge-0.3.1-macos-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.1/forge-0.3.1-macos-x64.tar.gz) (242 MB): For Intel Macs: unpack, then drag Forge.app into Applications
 
+## Android 8.0 or newer
+
+- [forge.apk](https://github.com/TANK-12/forge-android/releases/download/v0.3/forge.apk): Open a few Forge apps on your phone over your home Wi-Fi, in the Forge app for Android or in the phone's own browser. Phones · the Android app or the phone's browser, not yet tried on a real phone The APK comes from GitHub Releases; Android asks once to allow installs from your browser. In the app, pair with the address, check code and pairing code Devices shows: it trusts only your computer's own certificate and keeps no password. Checked in an Android emulator only.
+
 ## Phones
 
 There is nothing to download for a phone. On the computer, open Devices, Phones and switch on Phone link; then open the address it shows in the phone's browser, type the pairing code and add the page to the home screen. The phone and the computer must be on the same Wi-Fi. The phone's browser first warns that the connection is not private, because the computer makes its own certificate: check the address is the one Devices shows, then go on to it. Not yet tried on a real phone.
