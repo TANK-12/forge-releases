@@ -38,7 +38,7 @@ mkdir -p "$work"
 cd "$work"
 if ! gh release download "$tag" -R "$GITHUB_REPOSITORY" -p "forge-*-$target.tar.gz"; then
     # a draft has no tag yet: find it in the list of releases
-    asset=$(gh api "repos/$GITHUB_REPOSITORY/releases" --jq ".[] | select(.tag_name == \"$tag\") | .assets[] | select(.name | endswith(\"-$target.tar.gz\")) | \"\(.id) \(.name)\"" | head -1)
+    asset=$(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq ".[] | select(.tag_name == \"$tag\") | .assets[] | select(.name | endswith(\"-$target.tar.gz\")) | \"\(.id) \(.name)\"" | head -1)
     [ -n "$asset" ] || { note "FAIL download (no $target asset in $tag)"; exit 1; }
     gh api -H "Accept: application/octet-stream" "repos/$GITHUB_REPOSITORY/releases/assets/${asset%% *}" >"${asset#* }" || { note "FAIL download"; exit 1; }
 fi
@@ -115,10 +115,19 @@ limit 30 osascript -e 'tell application "System Events" to get name of every pro
 note "INFO visible processes: $(cat "$out/gui-processes.log")"
 pgrep -fl "[f]orge_portable|[w]ebview|[C]hrome" >"$out/gui-ps.log" 2>&1
 note "INFO hub / answered $(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8400/)"
+# backends start only when an app is opened (the welcome page opens none)
+before=$(pgrep -f "[u]vicorn" | wc -l | tr -d ' ')
+note "INFO backends running before quit: $before"
 limit 30 osascript -e 'tell application "Forge" to quit' >"$out/quit.log" 2>&1
 sleep 10
 if pgrep -f "[f]orge_portable.py" >/dev/null; then note "INFO still running 10 s after quit"; else note "PASS quit (no Forge process left)"; fi
-pgrep -fl "[u]vicorn" >"$out/after-quit-backends.log" && note "FAIL backends left after quit" || note "PASS no backends left after quit"
+if pgrep -fl "[u]vicorn" >"$out/after-quit-backends.log"; then
+    note "FAIL backends left after quit"
+elif [ "$before" -gt 0 ]; then
+    note "PASS no backends left after quit"
+else
+    note "INFO backends after quit: not tested (none was running)"
+fi
 stop_forge
 cp ~/Library/Logs/Forge/*.log "$out/" 2>/dev/null || true
 
@@ -135,7 +144,7 @@ pkill -f "[C]oreServicesUIAgent" || true
 
 # 6. a read-only .dmg with an Applications link, started from the mounted image
 mkdir -p "$work/dmgsrc"
-ditto /Applications/Forge.app "$work/dmgsrc/Forge.app"
+limit 600 ditto /Applications/Forge.app "$work/dmgsrc/Forge.app"
 ln -s /Applications "$work/dmgsrc/Applications"
 step "dmg"
 check dmg-create limit 900 hdiutil create -volname Forge -srcfolder "$work/dmgsrc" -format UDZO -ov "$work/Forge.dmg"
@@ -144,7 +153,7 @@ mnt=$(limit 300 hdiutil attach -nobrowse -readonly "$work/Forge.dmg" | awk -F'\t
 note "INFO dmg mounted at $mnt"
 mkdir -p "$work/home-dmg"
 check smoke-from-dmg limit 600 env HOME="$work/home-dmg" "$mnt/Forge.app/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files --report "$out/smoke-dmg.json"
-hdiutil detach "$mnt" >/dev/null 2>&1 || true
+limit 120 hdiutil detach "$mnt" >/dev/null 2>&1 || true
 
 # 7. ad hoc signature with the hardened runtime and Forge's entitlements
 cat >"$work/ent.plist" <<'P'
@@ -159,11 +168,13 @@ signed=$work/signed/Forge.app
 mkdir -p "$work/signed"
 limit 600 ditto /Applications/Forge.app "$signed"
 find "$signed" -type f -print0 | while IFS= read -r -d '' f; do
-    file -b "$f" | grep -q Mach-O && codesign --force -s - --options runtime --entitlements "$work/ent.plist" "$f" >>"$out/sign.log" 2>&1
+    file -b "$f" | grep -q Mach-O && limit 60 codesign --force -s - --options runtime --entitlements "$work/ent.plist" "$f" >>"$out/sign.log" 2>&1
 done
-check sign-app codesign --force -s - --options runtime --entitlements "$work/ent.plist" "$signed"
-check sign-verify codesign --verify --deep --strict --verbose=2 "$signed"
+check sign-app limit 300 codesign --force -s - --options runtime --entitlements "$work/ent.plist" "$signed"
+check sign-verify limit 300 codesign --verify --deep --strict --verbose=2 "$signed"
 mkdir -p "$work/home-signed"
 step "hardened"
 check smoke-hardened limit 600 env HOME="$work/home-signed" "$signed/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files,media,convert --report "$out/smoke-hardened.json"
 note "INFO done"
+# the job fails when any step did, so a green run means every PASS held
+! grep -q "^FAIL" "$res"
