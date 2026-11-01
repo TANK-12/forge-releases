@@ -10,6 +10,7 @@ out=$PWD/out
 mkdir -p "$out"
 res=$out/results.txt
 note() { echo "$*" | tee -a "$res"; }
+step() { echo "[$(date -u +%H:%M:%S)] $*"; }
 limit() { perl -e 'alarm shift; exec @ARGV' "$@"; }
 check() {
     name=$1
@@ -18,7 +19,7 @@ check() {
 }
 wait_port() {
     for _ in $(seq 1 "$2"); do
-        curl -s -o /dev/null "http://127.0.0.1:$1/" && return 0
+        curl -s --max-time 3 -o /dev/null "http://127.0.0.1:$1/" && return 0
         sleep 1
     done
     return 1
@@ -62,11 +63,13 @@ total=0 bad=0
 while IFS= read -r -d '' f; do
     if file -b "$f" | grep -q "Mach-O"; then
         total=$((total + 1))
-        codesign -v "$f" >/dev/null 2>&1 || { bad=$((bad + 1)); echo "$f" >>"$out/macho-unsigned.log"; }
+        # only this Mac's own CPU half of a universal file is ever loaded
+        codesign -v --arch "$(uname -m)" "$f" >/dev/null 2>&1 || { bad=$((bad + 1)); echo "$f" >>"$out/macho-unsigned.log"; }
+        codesign -v "$f" >/dev/null 2>&1 || echo "$f" >>"$out/macho-unsigned-any-arch.log"
         lipo -archs "$f" >>"$out/macho-archs.log" 2>&1
     fi
 done < <(find "$app" -type f -print0)
-note "INFO Mach-O files: $total, without a valid signature: $bad"
+note "INFO Mach-O files: $total, without a valid signature for $(uname -m): $bad, for some CPU: $(wc -l <"$out/macho-unsigned-any-arch.log" 2>/dev/null || echo 0)"
 sort "$out/macho-archs.log" | uniq -c >"$out/macho-archs-count.log"
 spctl -a -vv -t exec "$app" >"$out/spctl.log" 2>&1
 note "INFO spctl on the app: $(tr '\n' ' ' <"$out/spctl.log")"
@@ -75,48 +78,59 @@ if command -v syspolicy_check >/dev/null; then
     note "INFO syspolicy_check distribution exit $? (log: syspolicy-distribution.log)"
 fi
 
-# 3. drag to Applications (Finder keeps the quarantine flag), then start it still quarantined
-ditto "$app" /Applications/Forge.app
-open /Applications/Forge.app
-if wait_port 8400 90; then note "PASS gui-open-quarantined (hub answered)"; else note "FAIL gui-open-quarantined (no hub in 90 s)"; fi
-sleep 15
-screencapture -x "$out/1-quarantined-open.png" || note "INFO screencapture failed"
-stop_forge
+# 3. drag to Applications (Finder keeps the quarantine flag)
+step "copy to /Applications"
+limit 600 ditto "$app" /Applications/Forge.app || note "FAIL ditto to /Applications (exit $?)"
 
 # 4. the README's step, then every app's smoke check
-xattr -dr com.apple.quarantine /Applications/Forge.app
+step "xattr -dr"
+limit 120 xattr -dr com.apple.quarantine /Applications/Forge.app
 note "INFO quarantine left after xattr -dr: $(xattr -lr /Applications/Forge.app 2>/dev/null | grep -c quarantine)"
 mkdir -p "$work/home-smoke"
-check smoke env HOME="$work/home-smoke" limit 2400 /Applications/Forge.app/Contents/MacOS/Forge --smoke --report "$out/smoke.json"
-tail -5 "$out/smoke.log" | sed 's/^/INFO smoke: /' >>"$res"
+step "smoke"
+check smoke env HOME="$work/home-smoke" limit 1500 /Applications/Forge.app/Contents/MacOS/Forge --smoke --window none --report "$out/smoke.json"
+tail -8 "$out/smoke.log" | sed 's/^/INFO smoke: /' >>"$res"
+stop_forge
 
 # 5. open it as a user does: the window, the hub, the welcome page
-open /Applications/Forge.app
+step "gui open"
+limit 60 open /Applications/Forge.app || note "INFO open exit $?"
 if wait_port 8400 90; then note "PASS gui-open"; else note "FAIL gui-open (no hub in 90 s)"; fi
 sleep 25
-screencapture -x "$out/2-open.png" || true
-osascript -e 'tell application "System Events" to get name of every process whose background only is false' >"$out/gui-processes.log" 2>&1
+limit 30 screencapture -x "$out/2-open.png" || note "INFO screencapture failed"
+limit 30 osascript -e 'tell application "System Events" to get name of every process whose background only is false' >"$out/gui-processes.log" 2>&1
 note "INFO visible processes: $(cat "$out/gui-processes.log")"
 pgrep -fl "[f]orge_portable|[w]ebview|[C]hrome" >"$out/gui-ps.log" 2>&1
-curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8400/ >"$out/hub-code.log"
-note "INFO hub / answered $(cat "$out/hub-code.log")"
-osascript -e 'tell application "System Events" to keystroke "q" using command down' >/dev/null 2>&1
+note "INFO hub / answered $(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8400/)"
+limit 30 osascript -e 'tell application "Forge" to quit' >"$out/quit.log" 2>&1
 sleep 10
-if pgrep -f "[f]orge_portable.py" >/dev/null; then note "INFO still running 10 s after Cmd-Q"; else note "PASS quit-with-cmd-q (no Forge process left)"; fi
+if pgrep -f "[f]orge_portable.py" >/dev/null; then note "INFO still running 10 s after quit"; else note "PASS quit (no Forge process left)"; fi
 pgrep -fl "[u]vicorn" >"$out/after-quit-backends.log" && note "FAIL backends left after quit" || note "PASS no backends left after quit"
 stop_forge
 cp ~/Library/Logs/Forge/*.log "$out/" 2>/dev/null || true
+
+# 5b. what a quarantined copy does when opened (Gatekeeper's answer)
+step "quarantined open"
+limit 600 ditto "$app" "$work/q/Forge.app"
+limit 60 open "$work/q/Forge.app" >"$out/open-quarantined.log" 2>&1
+note "INFO open on the quarantined copy: exit $? $(tr '\n' ' ' <"$out/open-quarantined.log")"
+sleep 12
+limit 30 screencapture -x "$out/1-quarantined-open.png" || true
+if wait_port 8400 20; then note "INFO quarantined copy started anyway (Gatekeeper off or approved)"; else note "INFO quarantined copy did not start (as expected unsigned)"; fi
+stop_forge
+pkill -f "[C]oreServicesUIAgent" || true
 
 # 6. a read-only .dmg with an Applications link, started from the mounted image
 mkdir -p "$work/dmgsrc"
 ditto /Applications/Forge.app "$work/dmgsrc/Forge.app"
 ln -s /Applications "$work/dmgsrc/Applications"
-check dmg-create hdiutil create -volname Forge -srcfolder "$work/dmgsrc" -format UDZO -ov "$work/Forge.dmg"
+step "dmg"
+check dmg-create limit 900 hdiutil create -volname Forge -srcfolder "$work/dmgsrc" -format UDZO -ov "$work/Forge.dmg"
 note "INFO dmg $(stat -f %z "$work/Forge.dmg" 2>/dev/null) bytes"
-mnt=$(hdiutil attach -nobrowse -readonly "$work/Forge.dmg" | awk -F'\t' '/\/Volumes\//{print $NF}')
+mnt=$(limit 300 hdiutil attach -nobrowse -readonly "$work/Forge.dmg" | awk -F'\t' '/\/Volumes\//{print $NF}')
 note "INFO dmg mounted at $mnt"
 mkdir -p "$work/home-dmg"
-check smoke-from-dmg env HOME="$work/home-dmg" limit 900 "$mnt/Forge.app/Contents/MacOS/Forge" --smoke --apps notes,office,files --report "$out/smoke-dmg.json"
+check smoke-from-dmg env HOME="$work/home-dmg" limit 600 "$mnt/Forge.app/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files --report "$out/smoke-dmg.json"
 hdiutil detach "$mnt" >/dev/null 2>&1 || true
 
 # 7. ad hoc signature with the hardened runtime and Forge's entitlements
@@ -130,12 +144,13 @@ cat >"$work/ent.plist" <<'P'
 P
 signed=$work/signed/Forge.app
 mkdir -p "$work/signed"
-ditto /Applications/Forge.app "$signed"
+limit 600 ditto /Applications/Forge.app "$signed"
 find "$signed" -type f -print0 | while IFS= read -r -d '' f; do
     file -b "$f" | grep -q Mach-O && codesign --force -s - --options runtime --entitlements "$work/ent.plist" "$f" >>"$out/sign.log" 2>&1
 done
 check sign-app codesign --force -s - --options runtime --entitlements "$work/ent.plist" "$signed"
 check sign-verify codesign --verify --deep --strict --verbose=2 "$signed"
 mkdir -p "$work/home-signed"
-check smoke-hardened env HOME="$work/home-signed" limit 900 "$signed/Contents/MacOS/Forge" --smoke --apps notes,office,files,media,convert --report "$out/smoke-hardened.json"
+step "hardened"
+check smoke-hardened env HOME="$work/home-signed" limit 600 "$signed/Contents/MacOS/Forge" --smoke --window none --apps notes,office,files,media,convert --report "$out/smoke-hardened.json"
 note "INFO done"

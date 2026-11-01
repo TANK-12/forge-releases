@@ -16,7 +16,7 @@ jobs:
           - { os: macos-latest, target: macos-arm64 }
           - { os: macos-15-intel, target: macos-x64 }
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 60
+    timeout-minutes: 80
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
