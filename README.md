@@ -8,24 +8,17 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.3.2) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.3.3) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.3.2.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/Forge-Web-Setup-0.3.2.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.3.2.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/Forge-Setup-0.3.2.exe) (177 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.3.3.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.3/Forge-Web-Setup-0.3.3.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.3.3.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.3/Forge-Setup-0.3.3.exe) (177 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [forge-get-0.3.2-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-get-0.3.2-linux-x64.sh) (9 kB): Small installer script: downloads only the apps you pick
-- [forge-0.3.2-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-0.3.2-linux-x64.tar.gz) (254 MB): Full download: unpack, then run ./Forge/forge --install
-
-## macOS 13 or newer
-
-The Mac downloads are built and checked on Linux only and have not been tried on a real Mac yet.
-
-- [forge-0.3.2-macos-arm64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-0.3.2-macos-arm64.tar.gz) (240 MB): For Apple silicon Macs (M1 and newer): unpack, then drag Forge.app into Applications
-- [forge-0.3.2-macos-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.2/forge-0.3.2-macos-x64.tar.gz) (242 MB): For Intel Macs: unpack, then drag Forge.app into Applications
+- [forge-get-0.3.3-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.3/forge-get-0.3.3-linux-x64.sh) (10 kB): Small installer script: downloads only the apps you pick
+- [forge-0.3.3-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.3/forge-0.3.3-linux-x64.tar.gz) (254 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
