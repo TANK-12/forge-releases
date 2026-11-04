@@ -65,6 +65,30 @@
    "content_text": "Round Table, where ChatGPT, Gemini, Claude and local models talk a question through together, now lives inside Parley, and with a folder picked each seat can write code there. Your earlier discussions came along.",
    "date_published": "2026-11-04T00:00:00Z",
    "url": "forge:app/claude"
+  },
+  {
+   "id": "new-app-tokens",
+   "title": "New app: Tokens",
+   "summary": "Six short lessons on how an AI model reads text: how it chops words into tokens, why numbers are odd, and how to say the same thing in fewer tokens, with a playground for your own text. Find it under Learn.",
+   "content_text": "Six short lessons on how an AI model reads text: how it chops words into tokens, why numbers are odd, and how to say the same thing in fewer tokens, with a playground for your own text. Find it under Learn.",
+   "date_published": "2026-11-05T00:00:00Z",
+   "url": "forge:app/tokens"
+  },
+  {
+   "id": "new-app-chronicle",
+   "title": "New app: Chronicle",
+   "summary": "Watch a small world write its own history: four realms with rulers of their own, and each season brings weather, trade, wars and truces. Find it under Play.",
+   "content_text": "Watch a small world write its own history: four realms with rulers of their own, and each season brings weather, trade, wars and truces. Find it under Play.",
+   "date_published": "2026-11-05T00:00:00Z",
+   "url": "forge:app/chronicle"
+  },
+  {
+   "id": "windows-every-app-0.3.6",
+   "title": "Every app on Windows",
+   "summary": "Forge on Windows now has every app the Linux Forge has, from Power and Backup to NAS, Code and Relay. Open Settings, Updates to see what came in.",
+   "content_text": "Forge on Windows now has every app the Linux Forge has, from Power and Backup to NAS, Code and Relay. Open Settings, Updates to see what came in.",
+   "date_published": "2026-11-05T00:00:00Z",
+   "url": "forge:settings/updates"
   }
  ],
  "home_page_url": "https://tank-12.github.io/forge-releases/"

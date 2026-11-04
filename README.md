@@ -2,23 +2,31 @@
 
 ![Forge](https://openzenith.app/assets/hub-home.webp)
 
-Free apps for your own computer, in one window: files and storage, office work, creative tools, readers and study helpers. No account, and most work offline.
+## What Forge is
+
+Forge is a free program that puts lots of small, useful apps in one window on your own computer: files, notes and office work, PDFs, music and video, creative tools, games, readers and study helpers.
+
+It all runs on your computer, not on a website. There is no account to make, nothing you do is uploaded, and most apps keep working with the internet off.
+
+Apps that use AI run it on your computer too, so your words stay with you; the few that use cloud AI say so.
+
+Download it once for Windows or Linux. Forge updates itself only when you ask, and one click undoes an update you don't like.
 
 Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.3.5) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.3.6) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.3.5.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/Forge-Web-Setup-0.3.5.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.3.5.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/Forge-Setup-0.3.5.exe) (195 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.3.6.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.6/Forge-Web-Setup-0.3.6.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.3.6.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.6/Forge-Setup-0.3.6.exe) (197 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [forge-get-0.3.5-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/forge-get-0.3.5-linux-x64.sh) (10 kB): Small installer script: downloads only the apps you pick
-- [forge-0.3.5-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/forge-0.3.5-linux-x64.tar.gz) (272 MB): Full download: unpack, then run ./Forge/forge --install
+- [forge-get-0.3.6-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.6/forge-get-0.3.6-linux-x64.sh) (10 kB): Small installer script: downloads only the apps you pick
+- [forge-0.3.6-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.6/forge-0.3.6-linux-x64.tar.gz) (274 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
