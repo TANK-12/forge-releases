@@ -8,17 +8,17 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.3.4) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.3.5) and the update packs Forge downloads (the rolling 'packs' release, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.3.4.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.4/Forge-Web-Setup-0.3.4.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.3.4.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.4/Forge-Setup-0.3.4.exe) (187 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.3.5.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/Forge-Web-Setup-0.3.5.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.3.5.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/Forge-Setup-0.3.5.exe) (195 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [forge-get-0.3.4-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.4/forge-get-0.3.4-linux-x64.sh) (10 kB): Small installer script: downloads only the apps you pick
-- [forge-0.3.4-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.4/forge-0.3.4-linux-x64.tar.gz) (264 MB): Full download: unpack, then run ./Forge/forge --install
+- [forge-get-0.3.5-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/forge-get-0.3.5-linux-x64.sh) (10 kB): Small installer script: downloads only the apps you pick
+- [forge-0.3.5-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.3.5/forge-0.3.5-linux-x64.tar.gz) (272 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
@@ -30,6 +30,6 @@ Or skip the app and use the phone's browser. On the computer, open Devices, Phon
 
 ## Updates
 
-Forge looks for updates only when you press Check for updates in Settings, Updates; it never looks at the update list by itself. From there (or right-click an app) it updates one app or all of Forge, downloads only what changed and puts the old files back if anything fails. Your settings and saves are kept apart from the program and are never touched by an update.
+Forge looks for updates only when you press Look for updates in Settings, Updates; it never looks at the update list by itself. From there (or right-click an app) it updates one app or all of Forge: it shows what will change before anything does, downloads only what changed and puts the old files back if anything fails. It keeps the last few versions, so Go back undoes an update in one click. Your settings and saves are kept apart from the program and are never touched by an update.
 
 If an app turns out to be unsafe or broken, the signed update list can mark it withdrawn. The next time you check for updates, Forge stops that app, takes out its program files and tells you why. Your own files and saves in it are never touched, and a Forge that never checks for updates is never changed.

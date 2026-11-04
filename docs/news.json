@@ -6,6 +6,7 @@
    "id": "new-app-petal",
    "title": "New app: Petal",
    "summary": "Share work and models across your computers: pair another PC on your home network with one press, then let it take renders and other jobs or hold part of a big AI model. Open it from the sidebar, or install it in Settings, Updates.",
+   "content_text": "Share work and models across your computers: pair another PC on your home network with one press, then let it take renders and other jobs or hold part of a big AI model. Open it from the sidebar, or install it in Settings, Updates.",
    "date_published": "2026-11-02T00:00:00Z",
    "url": "forge:app/petal"
   },
@@ -13,6 +14,7 @@
    "id": "new-app-voice",
    "title": "New app: Voice",
    "summary": "Voice control for Forge: say what you want (open an app, a folder or a site, change the volume, play music, set a timer) and Forge does it. It is an optional app: install it in Settings, Updates, then press Get on its setup card to fetch the hearing program (about 87 MB).",
+   "content_text": "Voice control for Forge: say what you want (open an app, a folder or a site, change the volume, play music, set a timer) and Forge does it. It is an optional app: install it in Settings, Updates, then press Get on its setup card to fetch the hearing program (about 87 MB).",
    "date_published": "2026-11-03T00:00:00Z",
    "url": "forge:app/voice"
   },
@@ -20,8 +22,49 @@
    "id": "windows-setup-once-0.3.4",
    "title": "On Windows: run the 0.3.4 setup once",
    "summary": "Forge 0.3.3 and older on Windows cannot finish an update from Settings, Updates (it stops with Permission denied). Download the Forge 0.3.4 setup from the download page and run it over your copy once: your apps and data stay, and updates work in Forge again from then on. Linux copies update as usual.",
+   "content_text": "Forge 0.3.3 and older on Windows cannot finish an update from Settings, Updates (it stops with Permission denied). Download the Forge 0.3.4 setup from the download page and run it over your copy once: your apps and data stay, and updates work in Forge again from then on. Linux copies update as usual.",
    "date_published": "2026-11-03T00:00:00Z",
    "url": "https://tank-12.github.io/forge-releases/"
+  },
+  {
+   "id": "new-app-reader",
+   "title": "New app: Reader",
+   "summary": "Read reports and PDFs with big, clear text. It scrolls through a whole PDF, and its Edit pages button hands the file to the PDF app. Open it from the sidebar.",
+   "content_text": "Read reports and PDFs with big, clear text. It scrolls through a whole PDF, and its Edit pages button hands the file to the PDF app. Open it from the sidebar.",
+   "date_published": "2026-11-04T00:00:00Z",
+   "url": "forge:app/reader"
+  },
+  {
+   "id": "more-apps-0.3.5",
+   "title": "Four more apps to install",
+   "summary": "CastForge (podcasts and audiobooks from text), Code (VS Code inside Forge), NovelForge (long-form novel writing) and PulseForge (music videos and visualisers) are optional apps now: install the ones you want in Settings, Updates.",
+   "content_text": "CastForge (podcasts and audiobooks from text), Code (VS Code inside Forge), NovelForge (long-form novel writing) and PulseForge (music videos and visualisers) are optional apps now: install the ones you want in Settings, Updates.",
+   "date_published": "2026-11-04T00:00:00Z",
+   "url": "forge:settings/updates"
+  },
+  {
+   "id": "new-app-programs",
+   "title": "New app: Programs",
+   "summary": "Put your other programs and games on the Home screen as tiles that start them: installed programs, Steam and Godot games, or any program file. Home search opens them too.",
+   "content_text": "Put your other programs and games on the Home screen as tiles that start them: installed programs, Steam and Godot games, or any program file. Home search opens them too.",
+   "date_published": "2026-11-04T00:00:00Z",
+   "url": "forge:app/programs"
+  },
+  {
+   "id": "settings-five-groups-0.3.5",
+   "title": "A calmer Settings",
+   "summary": "Settings is sorted into five groups (Look, Home and desktop, Apps and behaviour, System and updates, Advanced) and lists only the open group's pages. Search still finds every setting, under its old name too.",
+   "content_text": "Settings is sorted into five groups (Look, Home and desktop, Apps and behaviour, System and updates, Advanced) and lists only the open group's pages. Search still finds every setting, under its old name too.",
+   "date_published": "2026-11-04T00:00:00Z",
+   "url": "forge:settings/themes"
+  },
+  {
+   "id": "round-table-in-parley-0.3.5",
+   "title": "Round Table moved to Parley",
+   "summary": "Round Table, where ChatGPT, Gemini, Claude and local models talk a question through together, now lives inside Parley, and with a folder picked each seat can write code there. Your earlier discussions came along.",
+   "content_text": "Round Table, where ChatGPT, Gemini, Claude and local models talk a question through together, now lives inside Parley, and with a folder picked each seat can write code there. Your earlier discussions came along.",
+   "date_published": "2026-11-04T00:00:00Z",
+   "url": "forge:app/claude"
   }
  ],
  "home_page_url": "https://tank-12.github.io/forge-releases/"
