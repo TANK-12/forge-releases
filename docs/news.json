@@ -75,14 +75,6 @@
    "url": "forge:app/tokens"
   },
   {
-   "id": "new-app-chronicle",
-   "title": "New app: Chronicle",
-   "summary": "Watch a small world write its own history: four realms with rulers of their own, and each season brings weather, trade, wars and truces. Find it under Play.",
-   "content_text": "Watch a small world write its own history: four realms with rulers of their own, and each season brings weather, trade, wars and truces. Find it under Play.",
-   "date_published": "2026-11-05T00:00:00Z",
-   "url": "forge:app/chronicle"
-  },
-  {
    "id": "windows-every-app-0.3.6",
    "title": "Every app on Windows",
    "summary": "Forge on Windows now has every app the Linux Forge has, from Power and Backup to NAS, Code and Relay. Open Settings, Updates to see what came in.",
