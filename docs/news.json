@@ -3,6 +3,14 @@
  "title": "Forge news",
  "items": [
   {
+   "id": "new-app-vr",
+   "title": "New app: Forge VR",
+   "summary": "An early version of Forge in a PC VR headset (PS VR2 through SteamVR first): five seated rooms with your Windows desktop on a big screen, your books, music and films. It is an optional app: install Forge VR and the Forge VR room in Settings, Updates; without a headset a room opens as a preview on the monitor.",
+   "content_text": "An early version of Forge in a PC VR headset (PS VR2 through SteamVR first): five seated rooms with your Windows desktop on a big screen, your books, music and films. It is an optional app: install Forge VR and the Forge VR room in Settings, Updates; without a headset a room opens as a preview on the monitor.",
+   "date_published": "2026-11-13T00:00:00Z",
+   "url": "forge:app/vr"
+  },
+  {
    "id": "new-app-petal",
    "title": "New app: Petal",
    "summary": "Share work and models across your computers: pair another PC on your home network with one press, then let it take renders and other jobs or hold part of a big AI model. Open it from the sidebar, or install it in Settings, Updates.",

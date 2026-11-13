@@ -16,17 +16,17 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.4.2) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.4.3) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.4.2.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.2/Forge-Web-Setup-0.4.2.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.4.2.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.2/Forge-Setup-0.4.2.exe) (202 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.4.3.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.3/Forge-Web-Setup-0.4.3.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.4.3.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.3/Forge-Setup-0.4.3.exe) (202 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [forge-get-0.4.2-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.2/forge-get-0.4.2-linux-x64.sh) (11 kB): Small installer script: downloads only the apps you pick
-- [forge-0.4.2-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.2/forge-0.4.2-linux-x64.tar.gz) (280 MB): Full download: unpack, then run ./Forge/forge --install
+- [forge-get-0.4.3-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.3/forge-get-0.4.3-linux-x64.sh) (11 kB): Small installer script: downloads only the apps you pick
+- [forge-0.4.3-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.3/forge-0.4.3-linux-x64.tar.gz) (280 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
