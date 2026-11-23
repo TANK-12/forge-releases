@@ -16,18 +16,18 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.4.6) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.4.7) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.4.6.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.6/Forge-Web-Setup-0.4.6.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.4.6.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.6/Forge-Setup-0.4.6.exe) (199 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.4.7.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/Forge-Web-Setup-0.4.7.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.4.7.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/Forge-Setup-0.4.7.exe) (199 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [Forge-0.4.6-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.6/Forge-0.4.6-x86_64.AppImage) (259 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
-- [forge-get-0.4.6-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.6/forge-get-0.4.6-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
-- [forge-0.4.6-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.6/forge-0.4.6-linux-x64.tar.gz) (273 MB): Full download: unpack, then run ./Forge/forge --install
+- [Forge-0.4.7-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/Forge-0.4.7-x86_64.AppImage) (259 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
+- [forge-get-0.4.7-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-get-0.4.7-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
+- [forge-0.4.7-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-0.4.7-linux-x64.tar.gz) (274 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
