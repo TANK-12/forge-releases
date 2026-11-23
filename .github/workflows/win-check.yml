@@ -1,0 +1,27 @@
+# Test-only: runs a Forge Windows download on GitHub's Windows runners (Relay task 1155),
+# for when the XPS is off. Lives on the win-check branch only; main and the download
+# page are untouched. win-check/tag.txt names the release tag (a draft is fine).
+name: Windows check
+on:
+  push:
+    branches: [win-check]
+  workflow_dispatch:
+permissions:
+  contents: write  # needed only to read a draft (unpublished) release
+jobs:
+  check:
+    runs-on: windows-latest
+    timeout-minutes: 80
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check the download
+        shell: pwsh
+        run: ./win-check/check.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: win-check
+          path: out
+          retention-days: 7
