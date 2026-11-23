@@ -47,9 +47,11 @@ Set-Content -Path "$zip`:Zone.Identifier" -Value "[ZoneTransfer]`r`nZoneId=3"
 Expand-Archive -Path $zip -DestinationPath (Join-Path $work 'zip') -Force
 $z = Get-ChildItem (Join-Path $work 'zip') -Recurse -Filter 'forge-console.cmd' | Select-Object -First 1
 if ($z) { Note "PASS unzip ($($z.DirectoryName))" } else { Note "FAIL unzip (no forge-console.cmd)"; exit 1 }
-function Smoke($name, $dir, $data) {
+function Smoke($name, $dir, $data, $apps = '') {
   $env:PYTHONDONTWRITEBYTECODE = '1'
-  $p = Start-Process -FilePath (Join-Path $dir 'runtime\python.exe') -ArgumentList @('-B', "`"$(Join-Path $dir 'forge_portable.py')`"", '--smoke', '--data', "`"$data`"", '--report', "`"$out\$name-report.json`"") -WorkingDirectory $dir -NoNewWindow -PassThru -RedirectStandardOutput "$out\$name.log" -RedirectStandardError "$out\$name.err"
+  $arguments = @('-B', "`"$(Join-Path $dir 'forge_portable.py')`"", '--smoke', '--data', "`"$data`"", '--report', "`"$out\$name-report.json`"")
+  if ($apps) { $arguments += @('--apps', $apps) }
+  $p = Start-Process -FilePath (Join-Path $dir 'runtime\python.exe') -ArgumentList $arguments -WorkingDirectory $dir -NoNewWindow -PassThru -RedirectStandardOutput "$out\$name.log" -RedirectStandardError "$out\$name.err"
   if (-not $p.WaitForExit(2400000)) { $p.Kill($true); Note "FAIL $name (timed out after 40 min)"; return }
   $tail = (Get-Content "$out\$name.log" -Tail 3) -join ' | '
   if ($p.ExitCode -eq 0) { Note "PASS $name ($tail)" } else { Note "FAIL $name (exit $($p.ExitCode); $tail)" }
@@ -85,5 +87,13 @@ $i = Start-Process -FilePath $web -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBO
 if ($i.ExitCode -eq 0 -and (Test-Path (Join-Path $webdest 'forge_portable.py'))) { Note "PASS web setup (exit 0)" }
 else { Note "FAIL web setup (exit $($i.ExitCode))"; exit 1 }
 CheckData 'web setup'
-Smoke 'smoke-web-installed' $webdest (Join-Path $work 'data-web-installed')
+# Exercise every selected app in small batches on the 4-core hosted runner.
+# The first cold web-setup run mass-started 68 imports and hit ready timeouts.
+$webapps = @(Get-ChildItem (Join-Path $webdest 'apps') -Filter 'forge_app.json' -Recurse | ForEach-Object { (Get-Content $_.FullName -Raw | ConvertFrom-Json).name } | Sort-Object -Unique)
+for ($offset = 0; $offset -lt $webapps.Count; $offset += 8) {
+  $last = [Math]::Min($offset + 7, $webapps.Count - 1)
+  $batch = $webapps[$offset..$last] -join ','
+  Smoke "smoke-web-batch-$offset" $webdest (Join-Path $work 'data-web-installed') $batch
+}
+
 if (Select-String -Path $res -Pattern '^FAIL' -Quiet) { exit 1 }
