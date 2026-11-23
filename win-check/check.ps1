@@ -16,11 +16,18 @@ Set-Location $work
 # one release object per line (a draft has no tag yet, so look it up in the list)
 $rel = gh api --paginate "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]' | ForEach-Object { $_ | ConvertFrom-Json } | Where-Object { $_.tag_name -eq $tag } | Select-Object -First 1
 if (-not $rel) { Note "FAIL download (no release $tag)"; exit 1 }
-foreach ($pat in @('*-windows-x64.zip', 'Forge-Setup-*.exe')) {
+foreach ($pat in @('*-windows-x64.zip', 'Forge-Setup-*.exe', 'Forge-Web-Setup-*.exe', 'SHA256SUMS')) {
   $a = $rel.assets | Where-Object { $_.name -like $pat } | Select-Object -First 1
   if (-not $a) { Note "FAIL download (no $pat in $tag)"; exit 1 }
   Invoke-WebRequest -Headers @{Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/octet-stream'} -Uri $a.url -OutFile $a.name
   Note "INFO $($a.name) $((Get-Item $a.name).Length) bytes, sha256 $((Get-FileHash $a.name).Hash.ToLower())"
+}
+foreach ($line in Get-Content 'SHA256SUMS') {
+  if ($line -match '^([0-9a-f]{64})  (.+)$' -and (Test-Path $Matches[2])) {
+    $expected = $Matches[1]; $file = $Matches[2]
+    if ((Get-FileHash $file).Hash.ToLower() -eq $expected) { Note "PASS checksum $file" }
+    else { Note "FAIL checksum $file"; exit 1 }
+  }
 }
 $zip = (Get-ChildItem '*-windows-x64.zip')[0].FullName
 $setup = (Get-ChildItem 'Forge-Setup-*.exe')[0].FullName
@@ -38,12 +45,21 @@ function Smoke($name, $dir, $data) {
 }
 # 2. every app's smoke check from the unzipped copy
 Smoke 'smoke-zip' $z.DirectoryName (Join-Path $work 'data-zip')
+$sentinels = @((Join-Path $env:APPDATA 'Forge\release-check-sentinel.txt'), (Join-Path $env:LOCALAPPDATA 'Forge\release-check-sentinel.txt'))
+foreach ($file in $sentinels) { New-Item -ItemType Directory -Force (Split-Path $file) | Out-Null; Set-Content $file 'preserve-existing-data-1381' }
+function CheckData($label) {
+  foreach ($file in $sentinels) {
+    if ((Test-Path $file) -and (Get-Content $file -Raw).Trim() -eq 'preserve-existing-data-1381') { Note "PASS $label preserves $file" }
+    else { Note "FAIL $label lost existing data: $file" }
+  }
+}
 # 3. the setup, silent, for this user only, then smoke the installed copy
 $dest = Join-Path $env:LOCALAPPDATA 'Programs\ForgeCheck'
 $i = Start-Process -FilePath $setup -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/DIR=`"$dest`"", "/LOG=`"$out\setup.log`"") -PassThru -Wait
 if ($i.ExitCode -eq 0 -and (Test-Path (Join-Path $dest 'forge_portable.py'))) { Note "PASS setup (exit 0, $dest)" } else { Note "FAIL setup (exit $($i.ExitCode))"; exit 1 }
 $lnk = @("$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Forge.lnk") | Where-Object { Test-Path $_ }
 Note "INFO start menu shortcut: $(if ($lnk) { 'present' } else { 'missing' })"
+CheckData 'full setup'
 Smoke 'smoke-installed' $dest (Join-Path $work 'data-installed')
 $u = Get-ChildItem $dest -Filter 'unins*.exe' | Select-Object -First 1
 if ($u) {
@@ -51,4 +67,12 @@ if ($u) {
   Start-Sleep 5
   if (-not (Test-Path (Join-Path $dest 'forge_portable.py'))) { Note "PASS uninstall (exit $($x.ExitCode))" } else { Note "FAIL uninstall (files left, exit $($x.ExitCode))" }
 } else { Note "FAIL uninstall (no unins*.exe)" }
+CheckData 'uninstall'
+$web = (Get-ChildItem 'Forge-Web-Setup-*.exe')[0].FullName
+$webdest = Join-Path $env:LOCALAPPDATA 'Programs\ForgeWebCheck'
+$i = Start-Process -FilePath $web -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', "/DIR=`"$webdest`"", "/LOG=`"$out\web-setup.log`"") -PassThru -Wait
+if ($i.ExitCode -eq 0 -and (Test-Path (Join-Path $webdest 'forge_portable.py'))) { Note "PASS web setup (exit 0)" }
+else { Note "FAIL web setup (exit $($i.ExitCode))"; exit 1 }
+CheckData 'web setup'
+Smoke 'smoke-web-installed' $webdest (Join-Path $work 'data-web-installed')
 if (Select-String -Path $res -Pattern '^FAIL' -Quiet) { exit 1 }
