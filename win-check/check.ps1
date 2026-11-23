@@ -14,7 +14,18 @@ $work = Join-Path $env:RUNNER_TEMP 'forge'
 New-Item -ItemType Directory -Force $work | Out-Null
 Set-Location $work
 # one release object per line (a draft has no tag yet, so look it up in the list)
-$rel = gh api --paginate "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]' | ForEach-Object { $_ | ConvertFrom-Json } | Where-Object { $_.tag_name -eq $tag } | Select-Object -First 1
+$ready = $false
+for ($attempt = 0; $attempt -lt 60; $attempt++) {
+  $rel = gh api --paginate "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]' | ForEach-Object { $_ | ConvertFrom-Json } | Where-Object { $_.tag_name -eq $tag } | Select-Object -First 1
+  $ready = $true
+  foreach ($pattern in @('*-windows-x64.zip', 'Forge-Setup-*.exe', 'Forge-Web-Setup-*.exe', 'SHA256SUMS')) {
+    if (-not ($rel.assets | Where-Object { $_.name -like $pattern -and $_.state -eq 'uploaded' })) { $ready = $false }
+  }
+  if ($ready) { break }
+  Note "INFO waiting for completed draft uploads ($attempt)"
+  Start-Sleep 20
+}
+if (-not $ready) { Note "FAIL draft assets did not finish uploading"; exit 1 }
 if (-not $rel) { Note "FAIL download (no release $tag)"; exit 1 }
 foreach ($pat in @('*-windows-x64.zip', 'Forge-Setup-*.exe', 'Forge-Web-Setup-*.exe', 'SHA256SUMS')) {
   $a = $rel.assets | Where-Object { $_.name -like $pat } | Select-Object -First 1
