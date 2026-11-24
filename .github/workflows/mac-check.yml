@@ -1,5 +1,8 @@
-# Test-only: runs a Forge Mac download on GitHub's Mac runners (Relay task 678).
-# Lives on the mac-check branch only; main and the download page are untouched.
+# Test-only: runs a Forge Mac download on GitHub's Mac runners (Relay tasks 678
+# and 1391). Lives on the mac-check branch of the releases repository only, as
+# .github/workflows/mac-check.yml beside mac-check/check.py and expected.json;
+# main and the download page are untouched. Standard macOS runners are free on
+# a public repository: Apple silicon (M1) and Intel, macOS 15 and 26.
 name: Mac check
 on:
   push:
@@ -13,19 +16,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { os: macos-latest, target: macos-arm64 }
+          - { os: macos-15, target: macos-arm64 }
+          - { os: macos-26, target: macos-arm64 }
           - { os: macos-15-intel, target: macos-x64 }
+          - { os: macos-26-intel, target: macos-x64 }
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 80
+    timeout-minutes: 150
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v5
       - name: Check the download
-        run: bash mac-check/check.sh ${{ matrix.target }}
+        run: python3 mac-check/check.py ${{ matrix.target }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: mac-check-${{ matrix.target }}
+          name: mac-check-${{ matrix.os }}
           path: out
-          retention-days: 7

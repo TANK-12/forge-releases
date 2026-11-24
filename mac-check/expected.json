@@ -1,0 +1,28 @@
+{
+ "macos-arm64": {
+  "new": {
+   "tag": "mac-check-1391",
+   "asset": "forge-0.4.7-macos-arm64.tar.gz",
+   "sha256": "063488e6383cd8d69d6a50fd6dff64655cbfc229713a7bbad3c2e98f19f282bc",
+   "version": "0.4.7"
+  },
+  "old": {
+   "tag": "v0.3.2",
+   "asset": "forge-0.3.2-macos-arm64.tar.gz",
+   "sha256": "c9a0ebebebc4b35dd38fb093ddc46af8f6a23f8529f8d0f2cf67683794310399"
+  }
+ },
+ "macos-x64": {
+  "new": {
+   "tag": "mac-check-1391",
+   "asset": "forge-0.4.7-macos-x64.tar.gz",
+   "sha256": "2cd3760bc888445f53a1cfa0b190fa012fd0f6307f3638229b3221626df36d05",
+   "version": "0.4.7"
+  },
+  "old": {
+   "tag": "v0.3.2",
+   "asset": "forge-0.3.2-macos-x64.tar.gz",
+   "sha256": "041cfdbad4923cbf06a518434ae3ae4e96fb891aaed9375d4b8469905acff57d"
+  }
+ }
+}
