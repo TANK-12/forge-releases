@@ -488,11 +488,22 @@ def update_path(old: Path, new: Path, version: str) -> None:
         return
     _, ping, _ = http(HUB + "/forge/ping")
     verdict(f'"version": "{version}"' in ping, "new app's version", one_line(ping))
-    _, _, where = http(HUB + "/hub/index.html")
+    # Forge answers /forge/ping a moment before begin() has read where.json
+    # (serve() runs first; the window opens only after begin), so the hub
+    # may still say welcome for that moment: wait for it to settle.
+    began = time.monotonic()
+    where = wait_for(
+        lambda: (lambda w: w if w.endswith("/hub/index.html") else "")(
+            http(HUB + "/hub/index.html")[2]
+        ),
+        30,
+        1,
+    )
     verdict(
-        where.endswith("/hub/index.html"),
+        bool(where),
         "new app remembers the place (no welcome page)",
-        where,
+        f"{where or http(HUB + '/hub/index.html')[2]}"
+        f" after {time.monotonic() - began:.0f} s",
     )
     shown = wait_for(native_windows, 90, 3)
     screenshot("new-app-open")
