@@ -49,6 +49,7 @@ import urllib.parse
 import urllib.request
 import uuid
 from pathlib import Path
+from typing import Literal
 
 TARGET = sys.argv[1] if len(sys.argv) > 1 else ""
 HERE = Path(__file__).resolve().parent
@@ -336,8 +337,44 @@ def unpack_like_finder(archive: Path) -> Path:
 
 MACHO = {
     bytes.fromhex(m)
-    for m in ("feedface", "feedfacf", "cefaedfe", "cffaedfe", "cafebabe", "bebafeca")
+    for m in (
+        "feedface",
+        "feedfacf",
+        "cefaedfe",
+        "cffaedfe",
+        "cafebabe",
+        "bebafeca",
+        "cafebabf",  # fat with 64-bit offsets
+        "bfbafeca",
+    )
 }
+CPU = {"arm64": 0x0100000C, "x86_64": 0x01000007}
+
+
+def cpu_types(head: bytes) -> set[int]:
+    """The CPU types a Mach-O file's first bytes say it holds: one for a thin
+    file, one per slice for a fat (universal) one."""
+    magic = head[:4]
+    if magic in (bytes.fromhex("cffaedfe"), bytes.fromhex("cefaedfe")):
+        return {int.from_bytes(head[4:8], "little")}
+    if magic in (bytes.fromhex("feedfacf"), bytes.fromhex("feedface")):
+        return {int.from_bytes(head[4:8], "big")}
+    fats: dict[bytes, tuple[Literal["big", "little"], int]] = {
+        bytes.fromhex("cafebabe"): ("big", 20),
+        bytes.fromhex("cafebabf"): ("big", 32),
+        bytes.fromhex("bebafeca"): ("little", 20),
+        bytes.fromhex("bfbafeca"): ("little", 32),
+    }
+    fat = fats.get(magic)
+    if not fat:
+        return set()
+    order, size = fat
+    count = min(int.from_bytes(head[4:8], order), 30)  # a Java class reads huge
+    return {
+        int.from_bytes(head[8 + i * size : 12 + i * size], order)
+        for i in range(count)
+        if len(head) >= 12 + i * size
+    }
 
 
 def min_macos(loads: str) -> list[str]:
@@ -377,16 +414,20 @@ def file_checks(app: Path) -> None:
         f" LSArchitecturePriority {info.get('LSArchitecturePriority')}",
     )
     total, unsigned, newest, newest_file = 0, [], (0,), ""
+    no_slice: list[str] = []
     arch = "arm64" if ARCH == "arm64" else "x86_64"
     for path in app.rglob("*"):
         if path.is_symlink() or not path.is_file():
             continue
         with open(path, "rb") as f:
-            if f.read(4) not in MACHO:
+            head = f.read(4096)
+            if head[:4] not in MACHO:
                 continue
         if path.suffix == ".class":
             continue
         total += 1
+        if CPU[arch] not in cpu_types(head):
+            no_slice.append(str(path.relative_to(app)))
         if run(["codesign", "-v", "--arch", arch, str(path)], timeout=60).returncode:
             unsigned.append(str(path.relative_to(app)))
         loads = run(["otool", "-arch", arch, "-l", str(path)], timeout=60).stdout
@@ -394,6 +435,13 @@ def file_checks(app: Path) -> None:
             if version_tuple(found) > newest:
                 newest, newest_file = version_tuple(found), str(path.relative_to(app))
     (OUT / "macho-unsigned.txt").write_text("\n".join(unsigned) + "\n")
+    (OUT / "macho-no-slice.txt").write_text("\n".join(no_slice) + "\n")
+    # a file without this Mac's part would pass the two checks below unread
+    verdict(
+        not no_slice,
+        f"every Mach-O file has a {arch} part",
+        f"{total} files, {len(no_slice)} without (macho-no-slice.txt)",
+    )
     verdict(
         not unsigned,
         f"every Mach-O file has a valid signature for {arch}",
