@@ -29,6 +29,13 @@ This repository holds only built files: the installers (release v0.4.7) and the 
 - [forge-get-0.4.7-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-get-0.4.7-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
 - [forge-0.4.7-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-0.4.7-linux-x64.tar.gz) (274 MB): Full download: unpack, then run ./Forge/forge --install
 
+## macOS 13 or newer
+
+The Mac downloads are checked on GitHub Mac machines (macOS 15 and 26, Apple silicon and Intel): installing, every app starting, and a new version keeping settings and saves. Nobody has tried them on their own Mac yet, macOS 13 and 14 have not been checked at all, and they are not signed by Apple.
+
+- [forge-0.4.7-macos-arm64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-0.4.7-macos-arm64.tar.gz) (255 MB): For Apple silicon Macs (M1 and newer): unpack, then drag Forge.app into Applications
+- [forge-0.4.7-macos-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-0.4.7-macos-x64.tar.gz) (261 MB): For Intel Macs: unpack, then drag Forge.app into Applications
+
 ## Android 8.0 or newer
 
 - [forge.apk](https://github.com/TANK-12/forge-android/releases/latest/download/forge.apk): Open a few Forge apps on your phone over your home Wi-Fi, in the Forge app for Android or in the phone's own browser. Phones · the Android app or the phone's browser, not yet tried on a real phone The APK comes from GitHub Releases; Android asks once to allow installs from your browser. In the app, pair with the address, check code and pairing code Devices shows: it trusts only your computer's own certificate and keeps no password. Checked in an Android emulator only.
@@ -53,6 +60,6 @@ wget -qO- https://openzenith.app/install.sh | sh
 
 ## Updates
 
-Forge looks for updates only when you press Look for updates in Settings, Updates; it never looks at the update list by itself. From there (or right-click an app) it updates one app or all of Forge: it shows what will change before anything does, downloads only what changed and puts the old files back if anything fails. It keeps the last few versions, so Go back undoes an update in one click. Your settings and saves are kept apart from the program and are never touched by an update.
+Forge looks for updates only when you press Look for updates in Settings, Updates; it never looks at the update list by itself. From there (or right-click an app) it updates one app or all of Forge: it shows what will change before anything does, downloads only what changed and puts the old files back if anything fails. It keeps the last few versions, so Go back undoes an update in one click. Your settings and saves are kept apart from the program and are never touched by an update. A Mac does not update Forge by itself: download the new version from this page and replace Forge.app in Applications. Your settings and saves are kept apart from the app, in your Library folder, and stay as they are.
 
 If an app turns out to be unsafe or broken, the signed update list can mark it withdrawn. The next time you check for updates, Forge stops that app, takes out its program files and tells you why. Your own files and saves in it are never touched, and a Forge that never checks for updates is never changed.
