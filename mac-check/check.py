@@ -340,6 +340,23 @@ MACHO = {
 }
 
 
+def min_macos(loads: str) -> list[str]:
+    """The lowest macOS each `otool -l` listing says it needs.
+
+    Only LC_BUILD_VERSION's minos and LC_VERSION_MIN_MACOSX's version count;
+    a linked library's "current version 62460.40.78" is not a macOS version.
+    """
+    found = []
+    for block in re.split(r"^Load command \d+$", loads, flags=re.M):
+        cmd = re.search(r"^\s*cmd (\S+)", block, flags=re.M)
+        key = {"LC_BUILD_VERSION": "minos", "LC_VERSION_MIN_MACOSX": "version"}.get(
+            cmd.group(1) if cmd else ""
+        )
+        if key:
+            found += re.findall(rf"^\s*{key} (\d+(?:\.\d+)*)\s*$", block, flags=re.M)
+    return found
+
+
 def version_tuple(text: str) -> tuple[int, ...]:
     return tuple(int(x) for x in re.findall(r"\d+", text)[:3])
 
@@ -373,7 +390,7 @@ def file_checks(app: Path) -> None:
         if run(["codesign", "-v", "--arch", arch, str(path)], timeout=60).returncode:
             unsigned.append(str(path.relative_to(app)))
         loads = run(["otool", "-arch", arch, "-l", str(path)], timeout=60).stdout
-        for found in re.findall(r"(?:minos|version) (\d+\.\d+(?:\.\d+)?)", loads):
+        for found in min_macos(loads):
             if version_tuple(found) > newest:
                 newest, newest_file = version_tuple(found), str(path.relative_to(app))
     (OUT / "macho-unsigned.txt").write_text("\n".join(unsigned) + "\n")
