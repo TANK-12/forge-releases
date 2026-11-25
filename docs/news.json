@@ -3,6 +3,14 @@
  "title": "Forge news",
  "items": [
   {
+   "id": "shared-accounts-auto-nas-0.4.8",
+   "title": "Shared accounts and Automatic NAS",
+   "summary": "Sign in once to carry your settings, custom themes and made apps across your Forge computers with end-to-end encryption, or turn on Automatic NAS in Files or the Setup guide for shared storage with no setup.",
+   "content_text": "Sign in once to carry your settings, custom themes and made apps across your Forge computers with end-to-end encryption, or turn on Automatic NAS in Files or the Setup guide for shared storage with no setup.",
+   "date_published": "2026-11-25T00:00:00Z",
+   "url": "forge:app/files"
+  },
+  {
    "id": "new-apps-visualiser-mind",
    "title": "New apps: Visualiser and Mind test",
    "summary": "Visualiser turns your music into moving visuals at up to 120 frames a second, and Mind test has timed puzzles and personality scales scored against open norms. Find them in the sidebar, or install them in Settings, Updates.",

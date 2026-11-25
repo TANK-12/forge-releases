@@ -16,25 +16,18 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.4.7) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.4.8) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.4.7.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/Forge-Web-Setup-0.4.7.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.4.7.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/Forge-Setup-0.4.7.exe) (199 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.4.8.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/Forge-Web-Setup-0.4.8.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.4.8.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/Forge-Setup-0.4.8.exe) (200 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [Forge-0.4.7-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/Forge-0.4.7-x86_64.AppImage) (259 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
-- [forge-get-0.4.7-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-get-0.4.7-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
-- [forge-0.4.7-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-0.4.7-linux-x64.tar.gz) (274 MB): Full download: unpack, then run ./Forge/forge --install
-
-## macOS 13 or newer
-
-The Mac downloads are checked on GitHub Mac machines (macOS 15 and 26, Apple silicon and Intel): installing, every app starting, and a new version keeping settings and saves. Nobody has tried them on their own Mac yet, macOS 13 and 14 have not been checked at all, and they are not signed by Apple.
-
-- [forge-0.4.7-macos-arm64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-0.4.7-macos-arm64.tar.gz) (255 MB): For Apple silicon Macs (M1 and newer): unpack, then drag Forge.app into Applications
-- [forge-0.4.7-macos-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.7/forge-0.4.7-macos-x64.tar.gz) (261 MB): For Intel Macs: unpack, then drag Forge.app into Applications
+- [Forge-0.4.8-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/Forge-0.4.8-x86_64.AppImage) (260 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
+- [forge-get-0.4.8-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/forge-get-0.4.8-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
+- [forge-0.4.8-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/forge-0.4.8-linux-x64.tar.gz) (274 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
@@ -60,6 +53,6 @@ wget -qO- https://openzenith.app/install.sh | sh
 
 ## Updates
 
-Forge looks for updates only when you press Look for updates in Settings, Updates; it never looks at the update list by itself. From there (or right-click an app) it updates one app or all of Forge: it shows what will change before anything does, downloads only what changed and puts the old files back if anything fails. It keeps the last few versions, so Go back undoes an update in one click. Your settings and saves are kept apart from the program and are never touched by an update. A Mac does not update Forge by itself: download the new version from this page and replace Forge.app in Applications. Your settings and saves are kept apart from the app, in your Library folder, and stay as they are.
+Forge looks for updates only when you press Look for updates in Settings, Updates; it never looks at the update list by itself. From there (or right-click an app) it updates one app or all of Forge: it shows what will change before anything does, downloads only what changed and puts the old files back if anything fails. It keeps the last few versions, so Go back undoes an update in one click. Your settings and saves are kept apart from the program and are never touched by an update.
 
 If an app turns out to be unsafe or broken, the signed update list can mark it withdrawn. The next time you check for updates, Forge stops that app, takes out its program files and tells you why. Your own files and saves in it are never touched, and a Forge that never checks for updates is never changed.
