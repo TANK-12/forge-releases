@@ -3,6 +3,14 @@
  "title": "Forge news",
  "items": [
   {
+   "id": "app-install-updates-0.4.9",
+   "title": "Cleaner app installs, uninstalls and updates",
+   "summary": "Install, update, reinstall or roll back apps and Forge itself with live progress, offline cache support, and a clean uninstall dialog that keeps your data by default.",
+   "content_text": "Install, update, reinstall or roll back apps and Forge itself with live progress, offline cache support, and a clean uninstall dialog that keeps your data by default.",
+   "date_published": "2026-11-26T00:00:00Z",
+   "url": "forge:settings/updates"
+  },
+  {
    "id": "shared-accounts-auto-nas-0.4.8",
    "title": "Shared accounts and Automatic NAS",
    "summary": "Sign in once to carry your settings, custom themes and made apps across your Forge computers with end-to-end encryption, or turn on Automatic NAS in Files or the Setup guide for shared storage with no setup.",

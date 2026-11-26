@@ -16,22 +16,22 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.4.8) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.4.9) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.4.8.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/Forge-Web-Setup-0.4.8.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.4.8.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/Forge-Setup-0.4.8.exe) (200 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.4.9.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/Forge-Web-Setup-0.4.9.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.4.9.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/Forge-Setup-0.4.9.exe) (200 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [Forge-0.4.8-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/Forge-0.4.8-x86_64.AppImage) (260 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
-- [forge-get-0.4.8-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/forge-get-0.4.8-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
-- [forge-0.4.8-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.8/forge-0.4.8-linux-x64.tar.gz) (274 MB): Full download: unpack, then run ./Forge/forge --install
+- [Forge-0.4.9-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/Forge-0.4.9-x86_64.AppImage) (261 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
+- [forge-get-0.4.9-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/forge-get-0.4.9-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
+- [forge-0.4.9-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/forge-0.4.9-linux-x64.tar.gz) (276 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
-- [forge.apk](https://github.com/TANK-12/forge-android/releases/latest/download/forge.apk): Open a few Forge apps on your phone over your home Wi-Fi, in the Forge app for Android or in the phone's own browser. Phones · the Android app or the phone's browser, not yet tried on a real phone The APK comes from GitHub Releases; Android asks once to allow installs from your browser. In the app, pair with the address, check code and pairing code Devices shows: it trusts only your computer's own certificate and keeps no password. Checked in an Android emulator only.
+- [forge.apk](https://github.com/TANK-12/forge-android/releases/latest/download/forge.apk): Open a few Forge apps on your phone over your home Wi-Fi, in the Forge app for Android or in the phone's own browser. Phones · Android APK or mobile browser (early preview) The APK comes from GitHub Releases; Android asks once to allow installs from your browser. In the app, pair with the address, check code and pairing code Devices shows: it trusts only your computer's own certificate and keeps no password. Checked in an Android emulator only.
 
 ## Phones
 
