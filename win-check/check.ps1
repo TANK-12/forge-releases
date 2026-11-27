@@ -74,6 +74,11 @@ $lnk = @("$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Forge.lnk") | Where
 Note "INFO start menu shortcut: $(if ($lnk) { 'present' } else { 'missing' })"
 CheckData 'full setup'
 Smoke 'smoke-installed' $dest (Join-Path $work 'data-installed')
+$env:PACK_DATA_DIR = Join-Path $work 'data-installed\PackData'
+$env:PACK_OUT_DIR = Join-Path $work 'data-installed\Packed'
+$env:PACK_UNPACK_DIR = Join-Path $work 'data-installed\Unpacked'
+$sc = & (Join-Path $dest 'runtime\python.exe') -c "import json, sys; sys.path[:0] = [r'$dest\apps\pack', r'$dest\shared']; import forge_vault as fv, pack_core; st = fv.native_lib_status(); res = pack_core.run_photo_showcase(); assert res['all_bit_exact'] is True and res['photo_count'] == 4 and res['jxl_used'] is True, res; print('PASS pack-showcase (' + str(res['saved_pct']) + '% saved, engine=' + str(st.get('mode')) + ', jxl=True, 4/4 bit-exact)')" 2>&1
+if ($LASTEXITCODE -eq 0) { Note ($sc | Select-Object -Last 1) } else { Note "FAIL pack-showcase ($sc)" }
 $u = Get-ChildItem $dest -Filter 'unins*.exe' | Select-Object -First 1
 if ($u) {
   $x = Start-Process -FilePath $u.FullName -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART') -PassThru -Wait
