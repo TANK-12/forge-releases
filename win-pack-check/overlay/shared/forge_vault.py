@@ -1900,6 +1900,7 @@ def unpack_vault(
 
         refcounts = [0] * chunk_cnt
         png_recipe_files = 0
+        png_stored_files = 0  # level-0 recipes (stored blocks)
         for fe in selected_entries:
             for ci in fe["chunks"]:
                 if not _valid_ci(ci):
@@ -1912,6 +1913,9 @@ def unpack_vault(
                 stage = media.get("stage")
                 if stage == "png_recipe_jxl":
                     png_recipe_files += 1
+                    recipe = media.get("recipe")
+                    if isinstance(recipe, list) and recipe and recipe[0] == 0:
+                        png_stored_files += 1
                 elif stage == "mp4_packet_dedup":
                     ref_path = media.get("ref_path")
                     if not isinstance(ref_path, str) or not ref_path:
@@ -1949,7 +1953,7 @@ def unpack_vault(
         # PNG recipes re-deflate with classic zlib: refuse before writing
         # anything when there is none here (Windows' Python has zlib-ng)
         if png_recipe_files:
-            why = forge_media.png_recipes_restorable()
+            why = forge_media.png_recipes_restorable(stored=png_stored_files > 0)
             if why:
                 raise VaultError(
                     f"{why} ({png_recipe_files} PNG file(s) in this pack need it; "

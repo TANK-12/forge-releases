@@ -516,21 +516,41 @@ def parse_png(data: bytes) -> tuple[list[tuple[bytes, bytes, bytes]], bytes] | N
     return chunks, data[pos:]
 
 
+def _classic_zlib_advice() -> str:
+    if forge_deflate.can_fetch():
+        return (
+            "Connect to the internet once so Forge can fetch it (one small download), "
+            "or point FORGE_ZLIB_CLASSIC at a classic zlib library."
+        )
+    return "Point FORGE_ZLIB_CLASSIC at a classic zlib library (zlib 1.2.12 or newer)."
+
+
 def classic_zlib_missing_words(why: str) -> str:
     """The message for restoring PNG recipes without classic zlib (forge_deflate's why)."""
     return (
         "Restoring PNG files packed with Pack's exact PNG recipe needs classic zlib, "
-        f"and there is none here: {why}. On Windows, connect to the internet once "
-        "so Forge can fetch it, or point FORGE_ZLIB_CLASSIC at a classic zlib library."
+        f"and there is none here: {why}. {_classic_zlib_advice()}"
     )
 
 
-def png_recipes_restorable(auto_fetch: bool = True) -> str | None:
-    """None when PNG recipes can be restored here, else the words saying why not."""
+def stored_recipe_words(name: str) -> str:
+    """The message for a level-0 (stored) recipe on a zlib whose stored blocks differ."""
+    return (
+        "Restoring PNG files whose exact recipe is zlib level 0 (stored) needs "
+        f"zlib 1.2.12 or newer, and the classic zlib here is {name}. "
+        "Point FORGE_ZLIB_CLASSIC at zlib 1.2.12 or newer."
+    )
+
+
+def png_recipes_restorable(auto_fetch: bool = True, stored: bool = False) -> str | None:
+    """None when PNG recipes (with `stored`: also level-0 ones) can be restored
+    here, else the words saying why not."""
     try:
-        forge_deflate.classic(auto_fetch=auto_fetch)
+        found = forge_deflate.classic(auto_fetch=auto_fetch)
     except forge_deflate.ClassicZlibMissing as exc:
         return classic_zlib_missing_words(str(exc))
+    if stored and not found.stored:
+        return stored_recipe_words(found.name)
     return None
 
 
@@ -559,6 +579,8 @@ def find_zlib_recipe(
     flevel = flg >> 6
     by_flag = {0: [1], 1: [2, 3, 4, 5], 2: [6], 3: [7, 8, 9]}[flevel]
     levels = by_flag + [lv for lv in range(0, 10) if lv not in by_flag]
+    if not classic.stored:  # zlib 1.2.11: its stored blocks differ, level 0 is off
+        levels = [lv for lv in levels if lv != 0]
     prefix = filtered[: 1 << 18]
     is_short = len(prefix) == len(filtered)
     for strategy in (0, 1, 3, 2):
@@ -861,6 +883,8 @@ def decode_png_recipe(
             classic = forge_deflate.classic(auto_fetch=True)
         except forge_deflate.ClassicZlibMissing as exc:
             raise MediaToolMissingError(classic_zlib_missing_words(str(exc))) from None
+    if lv == 0 and not classic.stored:
+        raise MediaToolMissingError(stored_recipe_words(classic.name))
 
     djxl = djxl_path or find_tool("djxl", auto_fetch=True)
     if not djxl:

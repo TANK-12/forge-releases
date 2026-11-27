@@ -100,12 +100,19 @@ FINGERPRINT_SETTINGS: tuple[tuple[int, int, int, int], ...] = (
     (6, 8, 3, 15),
     (1, 1, 3, 9),
 )
-# sha256 over every FINGERPRINT_SETTINGS stream of fingerprint_sample(), each
-# preceded by its length (4 bytes, little-endian), as classic zlib writes them
-# (1.2.12, 1.2.13, 1.3, 1.3.1, 1.3.2 and 1.4 all give this; 1.2.11's stored
-# blocks differ at level 0 with memLevel 3 or more, which (0, 5, 0, 11) catches;
-# Relay task 1578).
-GOLDEN_SHA256 = "03533435e4be5c9f3a342ba5a925404809ecbc1a3cd33c8756c5c015623d21d6"
+DEFLATE_SETTINGS = tuple(s for s in FINGERPRINT_SETTINGS if s[0] > 0)
+STORED_SETTINGS = tuple(s for s in FINGERPRINT_SETTINGS if s[0] == 0)
+# sha256 over the DEFLATE_SETTINGS (levels 1-9) and the STORED_SETTINGS
+# (level 0) streams of fingerprint_sample(), each stream preceded by its length
+# (4 bytes, little-endian), as classic zlib writes them: 1.2.12, 1.2.13, 1.3,
+# 1.3.1, 1.3.2 and 1.4 all give both. 1.2.11 gives the first only: its stored
+# blocks differ at level 0 with memLevel 3 or more, which (0, 5, 0, 11)
+# catches, so there level-0 recipes are off and every other level works.
+# zlib-ng gives the second only, which is no use (Relay task 1578).
+GOLDEN_SHA256 = "e125b66bbad097f6c1625ad5ab69298c4e992a39621bf68b3ed6b4b9ac71674a"
+GOLDEN_STORED_SHA256 = (
+    "dbbd5bcc756422a45a1527256eb060212a1f43d4a97eec2a3f07eace719182c5"  # noqa: E501
+)
 
 
 class ClassicZlibMissing(RuntimeError):
@@ -119,11 +126,18 @@ class Compressor(Protocol):
 
 
 class Classic:
-    """One classic deflate: `compressobj()` takes zlib.compressobj's arguments."""
+    """One classic deflate: `compressobj()` takes zlib.compressobj's arguments.
 
-    def __init__(self, name: str, factory: Callable[..., Compressor]) -> None:
+    `stored` is False for a zlib whose level-0 (stored) blocks differ from
+    1.2.12 and newer (1.2.11): it serves recipes of levels 1-9 only.
+    """
+
+    def __init__(
+        self, name: str, factory: Callable[..., Compressor], stored: bool = True
+    ) -> None:
         self.name = name
         self._factory = factory
+        self.stored = stored
 
     def compressobj(
         self,
@@ -305,11 +319,14 @@ def fingerprint_sample() -> bytes:
     return bytes(out)
 
 
-def fingerprint(factory: Callable[..., Compressor]) -> str:
-    """The sha256 `factory` (zlib.compressobj-like) gives over FINGERPRINT_SETTINGS."""
+def fingerprint(
+    factory: Callable[..., Compressor],
+    settings: tuple[tuple[int, int, int, int], ...] = DEFLATE_SETTINGS,
+) -> str:
+    """The sha256 `factory` (zlib.compressobj-like) gives over `settings`."""
     data = fingerprint_sample()
     h = hashlib.sha256()
-    for level, mem, strategy, wbits in FINGERPRINT_SETTINGS:
+    for level, mem, strategy, wbits in settings:
         co = factory(level, Z_DEFLATED, wbits, mem, strategy)
         stream = co.compress(data) + co.flush()
         h.update(len(stream).to_bytes(4, "little"))
@@ -317,16 +334,37 @@ def fingerprint(factory: Callable[..., Compressor]) -> str:
     return h.hexdigest()
 
 
-def python_zlib_is_classic() -> bool:
-    """True when this Python's own zlib is classic zlib (plain version, golden streams)."""
-    if getattr(zlib, "ZLIBNG_VERSION", None):
-        return False
-    if not re.fullmatch(r"\d+(\.\d+){1,3}", zlib.ZLIB_RUNTIME_VERSION):
-        return False
+def judge(name: str, factory: Callable[..., Compressor]) -> Classic | None:
+    """A Classic over `factory` when it writes classic zlib's bytes for levels
+    1-9 (`stored` says whether level 0 matches too), else None."""
     try:
-        return fingerprint(zlib.compressobj) == GOLDEN_SHA256
+        if fingerprint(factory, DEFLATE_SETTINGS) != GOLDEN_SHA256:
+            return None
+        stored = fingerprint(factory, STORED_SETTINGS) == GOLDEN_STORED_SHA256
     except (ValueError, zlib.error):
-        return False
+        return None
+    if not stored:
+        name += ", whose level-0 stored blocks differ (level-0 recipes off)"
+    return Classic(name, factory, stored)
+
+
+def _python_plain_version() -> bool:
+    return not getattr(zlib, "ZLIBNG_VERSION", None) and bool(
+        re.fullmatch(r"\d+(\.\d+){1,3}", zlib.ZLIB_RUNTIME_VERSION)
+    )
+
+
+def python_classic() -> Classic | None:
+    """This Python's own zlib as a Classic when it is classic (fully or for levels 1-9)."""
+    if not _python_plain_version():
+        return None
+    return judge(f"Python's zlib {zlib.ZLIB_RUNTIME_VERSION}", zlib.compressobj)
+
+
+def python_zlib_is_classic() -> bool:
+    """True when this Python's own zlib is classic zlib at every level."""
+    got = python_classic()
+    return bool(got and got.stored)
 
 
 def load_library(path: str) -> Classic:
@@ -342,22 +380,20 @@ def load_library(path: str) -> Classic:
     ) -> CtypesCompress:
         return CtypesCompress(lib, level, method, wbits, mem, strategy)
 
-    try:
-        got = fingerprint(factory)
-    except (ValueError, zlib.error) as exc:
-        raise ValueError(f"{path} (zlib {version}) failed to deflate: {exc}") from None
-    if got != GOLDEN_SHA256:
+    got = judge(f"zlib {version} ({Path(path).name})", factory)
+    if got is None:
         raise ValueError(
             f"{path} (zlib {version}) does not write classic zlib's deflate bytes"
         )
-    return Classic(f"zlib {version} ({Path(path).name})", factory)
+    return got
 
 
 # ----------------------------- finding one -----------------------------
 
 _lock = threading.Lock()
 _found: Classic | None = None
-_python_checked = False
+_UNCHECKED = Classic("unchecked", zlib.compressobj)
+_python: Classic | None = _UNCHECKED
 _why = ""
 _rejected: dict[str, str] = {}  # library path -> why it is not classic
 
@@ -369,6 +405,12 @@ def _forge_tools() -> Any:
         return forge_tools
     except Exception:  # noqa: BLE001 — optional when run without Forge's shared folder
         return None
+
+
+def can_fetch() -> bool:
+    """True when Forge has a classic zlib build to fetch for this system."""
+    ft = _forge_tools()
+    return bool(ft is not None and ft.can_fetch(TOOL))
 
 
 def python_zlib_words() -> str:
@@ -391,65 +433,85 @@ def _load_once(path: str) -> Classic:
     if path in _rejected:
         raise ValueError(_rejected[path])
     try:
-        return load_library(path)
+        got = load_library(path)
     except ValueError as exc:
         _rejected[path] = str(exc)
         raise
+    return got
+
+
+def _search(
+    reasons: list[str], fetch_error: str = "", fetched_path: str = ""
+) -> Classic | None:
+    """The best classic deflate here without fetching (call with _lock held):
+    a full one first, else one for levels 1-9 only, else None (reasons say why)."""
+    global _python
+    if _python is _UNCHECKED:
+        _python = python_classic()
+    best = _python
+    if best is not None and best.stored:
+        return best
+    paths: list[tuple[str, str]] = []
+    env_path = os.environ.get(ENV_VAR)
+    if env_path:
+        paths.append((f"{ENV_VAR}: ", env_path))
+    ft = _forge_tools()
+    if ft is not None:
+        fetched = ft.find(TOOL) or fetched_path
+        if fetched:
+            paths.append(("", fetched))
+        elif fetch_error:
+            reasons.append(f"could not fetch Forge's classic zlib: {fetch_error}")
+        elif not ft.can_fetch(TOOL):
+            reasons.append("Forge has no classic zlib build to fetch for this system")
+        else:
+            reasons.append("Forge's classic zlib is not fetched yet")
+    system = _system_library()
+    if system:
+        paths.append(("system ", system))
+    for label, path in paths:
+        try:
+            got = _load_once(path)
+        except ValueError as exc:
+            reasons.append(f"{label}{exc}")
+            continue
+        if got.stored:
+            return got
+        best = best or got
+    return best
 
 
 def classic(auto_fetch: bool = False) -> Classic:
     """A classic zlib deflate, or ClassicZlibMissing naming why there is none.
 
     auto_fetch lets Forge fetch its pinned classic zlib (one small download,
-    Windows) when nothing else here is classic. Found ones are kept for the
-    process; a failed fetch is retried only after forge_tools' wait.
+    Windows) when nothing here is classic; the download runs outside this
+    module's lock, so status() never waits for it. What is found is kept for
+    the process; a failed fetch is retried only after forge_tools' wait.
     """
-    global _found, _python_checked, _why
+    global _found, _why
     with _lock:
         if _found is not None:
             return _found
-        if not _python_checked:
-            _python_checked = True
-            if python_zlib_is_classic():
-                _found = Classic(
-                    f"Python's zlib {zlib.ZLIB_RUNTIME_VERSION}", zlib.compressobj
-                )
-                return _found
+        got = _search([])
+        if got is not None:
+            _found = got
+            return got
+    fetch_error = fetched_path = ""
+    ft = _forge_tools()
+    if auto_fetch and ft is not None and ft.can_fetch(TOOL) and not ft.find(TOOL):
+        try:
+            fetched_path = ft.ensure(TOOL)  # forge_tools: one process fetches at a time
+        except Exception as exc:  # noqa: BLE001 — offline, disk full, ...
+            fetch_error = str(exc) or type(exc).__name__
+    with _lock:
+        if _found is not None:
+            return _found
         reasons: list[str] = []
-        env_path = os.environ.get(ENV_VAR)
-        if env_path:
-            try:
-                _found = _load_once(env_path)
-                return _found
-            except ValueError as exc:
-                reasons.append(f"{ENV_VAR}: {exc}")
-        ft = _forge_tools()
-        if ft is not None:
-            path = ft.find(TOOL)
-            if path is None and auto_fetch and ft.can_fetch(TOOL):
-                try:
-                    path = ft.ensure(TOOL)
-                except Exception as exc:  # noqa: BLE001 — offline, disk full, ...
-                    reasons.append(f"could not fetch Forge's classic zlib: {exc}")
-            if path:
-                try:
-                    _found = _load_once(path)
-                    return _found
-                except ValueError as exc:
-                    reasons.append(str(exc))
-            elif not ft.can_fetch(TOOL):
-                reasons.append(
-                    "Forge has no classic zlib build to fetch for this system"
-                )
-            elif not auto_fetch and not reasons:
-                reasons.append("Forge's classic zlib is not fetched yet")
-        system = _system_library()
-        if system:
-            try:
-                _found = _load_once(system)
-                return _found
-            except ValueError as exc:
-                reasons.append(f"system {exc}")
+        got = _search(reasons, fetch_error, fetched_path)
+        if got is not None:
+            _found = got
+            return got
         _why = (
             f"this Python's zlib is {python_zlib_words()}, which writes different "
             "deflate bytes than classic zlib"
@@ -469,29 +531,32 @@ def try_classic(auto_fetch: bool = False) -> Classic | None:
 def status() -> dict[str, Any]:
     """For a status page: is a classic deflate ready (never fetches)."""
     found = try_classic(auto_fetch=False)
-    ft = _forge_tools()
-    can_fetch = bool(ft is not None and ft.can_fetch(TOOL))
     return {
         "ready": found is not None,
+        "stored": bool(found and found.stored),
         "source": found.name if found else None,
         "python_zlib": python_zlib_words(),
-        "can_fetch": can_fetch,
+        "can_fetch": can_fetch(),
         "why": "" if found else _why,
     }
 
 
 def forget() -> None:
     """Drop what was found, so the next classic() looks again (tests, after a fetch)."""
-    global _found, _python_checked, _why
+    global _found, _python, _why
     with _lock:
         _found = None
-        _python_checked = False
+        _python = _UNCHECKED
         _why = ""
         _rejected.clear()
 
 
 if __name__ == "__main__":
     if sys.argv[1:] == ["fingerprint"]:
-        print(fingerprint(zlib.compressobj), zlib.ZLIB_RUNTIME_VERSION)
+        print(
+            fingerprint(zlib.compressobj, DEFLATE_SETTINGS),
+            fingerprint(zlib.compressobj, STORED_SETTINGS),
+            zlib.ZLIB_RUNTIME_VERSION,
+        )
     else:
         print(status())

@@ -896,7 +896,14 @@ ZLIB_FINGERPRINT_SETTINGS = (
     (7, 9, 0, 14), (8, 8, 0, 15), (9, 9, 0, 15), (9, 2, 1, 10), (6, 8, 2, 15),
     (6, 8, 3, 15), (1, 1, 3, 9),
 )  # fmt: skip
-ZLIB_GOLDEN_SHA256 = "03533435e4be5c9f3a342ba5a925404809ecbc1a3cd33c8756c5c015623d21d6"
+ZLIB_GOLDEN_SHA256 = (
+    "e125b66bbad097f6c1625ad5ab69298c4e992a39621bf68b3ed6b4b9ac71674a"  # levels 1-9
+)
+ZLIB_GOLDEN_STORED_SHA256 = (
+    "dbbd5bcc756422a45a1527256eb060212a1f43d4a97eec2a3f07eace719182c5"  # level 0
+)
+# where an installed Forge keeps its fetched classic zlib, under its tools folder
+ZLIB_TOOL_PATH = ("zlib-classic", "ucrt64", "bin", "zlib1.dll")
 
 
 class _ZStream(ctypes.Structure):
@@ -1018,14 +1025,29 @@ def _zlib_fingerprint_sample() -> bytes:
     return bytes(out)
 
 
-def _zlib_fingerprint(deflate: Callable[[bytes, int, int, int, int], bytes]) -> str:
+def _zlib_fingerprint(
+    deflate: Callable[[bytes, int, int, int, int], bytes], stored: bool = False
+) -> str:
     data = _zlib_fingerprint_sample()
     h = hashlib.sha256()
     for level, mem, strategy, wbits in ZLIB_FINGERPRINT_SETTINGS:
+        if (level == 0) != stored:
+            continue
         stream = deflate(data, level, mem, strategy, wbits)
         h.update(len(stream).to_bytes(4, "little"))
         h.update(stream)
     return h.hexdigest()
+
+
+def _zlib_judge(deflate: Callable[[bytes, int, int, int, int], bytes]) -> bool | None:
+    """None: not classic; True: classic at every level; False: levels 1-9 only
+    (zlib 1.2.11, whose level-0 stored blocks differ)."""
+    try:
+        if _zlib_fingerprint(deflate) != ZLIB_GOLDEN_SHA256:
+            return None
+        return _zlib_fingerprint(deflate, stored=True) == ZLIB_GOLDEN_STORED_SHA256
+    except (ValueError, zlib.error):
+        return None
 
 
 def _zlib_library_candidates() -> list[str]:
@@ -1050,7 +1072,7 @@ def _zlib_library_candidates() -> list[str]:
         local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
         tools.append(Path(local) / "Forge" / "Cache" / "tools")
     for t in tools:
-        cand = t / "zlib-classic" / "ucrt64" / "bin" / "zlib1.dll"
+        cand = t.joinpath(*ZLIB_TOOL_PATH)
         if cand.is_file():
             out.append(str(cand))
     if os.name != "nt":
@@ -1062,57 +1084,89 @@ def _zlib_library_candidates() -> list[str]:
     return out
 
 
-_ZLIB_CLASSIC: list[Any] = []  # [deflate function] once found
+_ZLIB_CLASSIC: list[Any] = []  # [(deflate function, stored ok, name)] once found
 
 
-def _classic_deflate() -> Callable[[bytes, int, int, int, int], bytes]:
-    """A classic zlib deflate(data, level, mem, strategy, wbits), else UnpackError saying why."""
-    if _ZLIB_CLASSIC:
-        return _ZLIB_CLASSIC[0]
+def _classic_deflate(
+    stored: bool = False,
+) -> Callable[[bytes, int, int, int, int], bytes]:
+    """A classic zlib deflate(data, level, mem, strategy, wbits), else UnpackError
+    saying why; `stored`: level-0 recipes must restore too."""
+    if not _ZLIB_CLASSIC:
+        _ZLIB_CLASSIC.append(_find_classic_deflate())
+    run, stored_ok, name = _ZLIB_CLASSIC[0]
+    if stored and not stored_ok:
+        raise UnpackError(
+            "this pack holds PNG files whose exact recipe is zlib level 0 (stored), "
+            f"which restore only with zlib 1.2.12 or newer, and the classic zlib here is "
+            f"{name}. Point FORGE_ZLIB_CLASSIC at zlib 1.2.12 or newer."
+        )
+    return run
+
+
+def _find_classic_deflate() -> (
+    tuple[Callable[[bytes, int, int, int, int], bytes], bool, str]
+):
     ver = zlib.ZLIB_RUNTIME_VERSION
     ng = getattr(zlib, "ZLIBNG_VERSION", None)
     import re  # noqa: PLC0415
 
+    best: tuple[Callable[[bytes, int, int, int, int], bytes], bool, str] | None = None
     if not ng and re.fullmatch(r"\d+(\.\d+){1,3}", ver):
-        try:
-            if _zlib_fingerprint(_zlib_python_deflate) == ZLIB_GOLDEN_SHA256:
-                _ZLIB_CLASSIC.append(_zlib_python_deflate)
-                return _zlib_python_deflate
-        except (ValueError, zlib.error):
-            pass
+        verdict = _zlib_judge(_zlib_python_deflate)
+        if verdict is not None:
+            best = (_zlib_python_deflate, verdict, f"Python's zlib {ver}")
+            if verdict:
+                return best
     tried: list[str] = []
     for path in _zlib_library_candidates():
         try:
             lib = _zlib_bind(ctypes.CDLL(path))
-
-            def run(
-                data: bytes,
-                level: int,
-                mem: int,
-                strategy: int,
-                wbits: int,
-                _lib: Any = lib,
-            ) -> bytes:
-                return _zlib_deflate_ctypes(_lib, data, level, mem, strategy, wbits)
-
-            if _zlib_fingerprint(run) == ZLIB_GOLDEN_SHA256:
-                _ZLIB_CLASSIC.append(run)
-                return run
-            tried.append(f"{path} does not write classic zlib's deflate bytes")
-        except (OSError, AttributeError, ValueError, zlib.error) as exc:
+        except (OSError, AttributeError) as exc:
             tried.append(f"{path}: {exc}")
+            continue
+
+        def run(
+            data: bytes,
+            level: int,
+            mem: int,
+            strategy: int,
+            wbits: int,
+            _lib: Any = lib,
+        ) -> bytes:
+            return _zlib_deflate_ctypes(_lib, data, level, mem, strategy, wbits)
+
+        verdict = _zlib_judge(run)
+        if verdict is None:
+            tried.append(f"{path} does not write classic zlib's deflate bytes")
+            continue
+        got = (run, verdict, f"zlib {(lib.zlibVersion() or b'').decode()} ({path})")
+        if verdict:
+            return got
+        best = best or got
+    if best is not None:
+        return best
     kind = (
         f"zlib-ng {ng}"
         if ng
         else (f"zlib-ng ({ver})" if "ng" in ver.lower() else f"zlib {ver}")
     )
+    if os.name == "nt":
+        advice = (
+            "Put a classic zlib1.dll (zlib 1.2.12 or newer, from zlib.net or MSYS2) "
+            "beside forge_unpack.py or point FORGE_ZLIB_CLASSIC at one; Forge itself "
+            "fetches it on first use."
+        )
+    else:
+        advice = (
+            "Point FORGE_ZLIB_CLASSIC at a classic zlib library (zlib 1.2.12 or newer, "
+            "libz.so.1 or libz.dylib) or put it beside forge_unpack.py."
+        )
     raise UnpackError(
         "this pack holds PNG files packed with Pack's exact PNG recipe, which "
         f"restore only with classic zlib, and this Python's zlib is {kind}"
         + (f" ({'; '.join(tried)})" if tried else "")
-        + ". Put a classic zlib1.dll (zlib 1.2.12 or newer, from zlib.net or MSYS2) "
-        "beside forge_unpack.py or point FORGE_ZLIB_CLASSIC at one; Forge itself "
-        "fetches it on first use. Nothing was written."
+        + f". {advice}"
     )
 
 
@@ -1322,7 +1376,7 @@ def _decode_png_recipe_standalone(
         raise UnpackError("PNG recipe trailing length mismatch")
     trailing = hdr_plain[pos : pos + trailing_len]
 
-    deflate = _classic_deflate()
+    deflate = _classic_deflate(stored=lv == 0)
     djxl = _find_djxl()
     if not djxl:
         raise UnpackError(
@@ -1739,6 +1793,7 @@ def unpack_or_verify(
             return type(val) is int and 0 <= val < chunk_cnt
 
         png_recipe_files = 0
+        png_stored_files = 0  # level-0 recipes (stored blocks)
         for fe in raw_files:
             for ci in fe["chunks"]:
                 if not _valid_ci(ci):
@@ -1750,6 +1805,9 @@ def unpack_or_verify(
                 st_name = media.get("stage")
                 if st_name == "png_recipe_jxl":
                     png_recipe_files += 1
+                    recipe = media.get("recipe")
+                    if isinstance(recipe, list) and recipe and recipe[0] == 0:
+                        png_stored_files += 1
                 elif st_name == "mp4_packet_dedup":
                     rp = media.get("ref_path")
                     if not isinstance(rp, str) or not rp:
@@ -1776,8 +1834,11 @@ def unpack_or_verify(
                         for aci in aspec["chunks"]:
                             if not _valid_ci(aci):
                                 raise UnpackError(f"invalid asset chunk index {aci}")
-        if png_recipe_files:
-            _classic_deflate()  # refuse before writing anything (zlib-ng here)
+        if png_recipe_files:  # refuse before writing anything (zlib-ng here)
+            try:
+                _classic_deflate(stored=png_stored_files > 0)
+            except UnpackError as exc:
+                raise UnpackError(f"{exc} Nothing was written.") from None
 
         def read_chunk(ci: int) -> bytes:
             if not _valid_ci(ci):
