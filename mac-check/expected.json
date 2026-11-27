@@ -3,7 +3,7 @@
   "new": {
    "tag": "mac-check-1572",
    "asset": "forge-0.4.10-macos-arm64.tar.gz",
-   "sha256": "df71abe81573361780570ed0cb15fac68aaa957b978b510d3c6b86680115acc3",
+   "sha256": "18c609e4ad7a08a4d8c6b4680c281cf66b10dd6858b6fe6cb1781841937ebbbc",
    "version": "0.4.10"
   },
   "old": {
@@ -16,7 +16,7 @@
   "new": {
    "tag": "mac-check-1572",
    "asset": "forge-0.4.10-macos-x64.tar.gz",
-   "sha256": "979c12938e3e3ab573e17f56a7c06c13bb1d1e8e30b457399a80347ca8087b97",
+   "sha256": "580bf5cdd07fabceec60dd7b65a9a6b43e4c999f99c75f20b5f1f13ba7f5ca7b",
    "version": "0.4.10"
   },
   "old": {
