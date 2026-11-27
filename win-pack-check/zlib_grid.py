@@ -95,6 +95,7 @@ def main() -> int:
                 return fd.CtypesCompress(_lib, *args)
 
             name = a.lib
+            cl = fd.Classic(name, factory)
         else:
             factory = cl.compressobj
             name = cl.name

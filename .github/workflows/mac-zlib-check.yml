@@ -1,0 +1,33 @@
+# Test-only (Relay task 1578): Apple's system zlib (which Forge's Mac runtime links) against
+# classic zlib over Pack's PNG recipe grid, on GitHub's Macs. win-pack-check branch only.
+name: Mac zlib check
+on:
+  push:
+    branches: [win-pack-check]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mac:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-26, macos-15-intel, macos-26-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - name: Apple's zlib against the laptop's
+        run: |
+          F="$RUNNER_TEMP/forge"
+          mkdir -p "$F/apps/pack" out
+          cp -R win-pack-check/overlay/shared "$F/shared"
+          cp -R win-pack-check/demo_photos "$F/apps/pack/demo_photos"
+          python3 win-pack-check/mac_check.py --forge "$F" --out out 2>&1 | tee out/results.txt
+          exit "${PIPESTATUS[0]}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mac-zlib-check-${{ matrix.os }}
+          path: out
+          retention-days: 7
