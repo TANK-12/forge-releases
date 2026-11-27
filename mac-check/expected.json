@@ -1,28 +1,28 @@
 {
-  "macos-arm64": {
-    "new": {
-      "tag": "mac-check-1572",
-      "asset": "forge-0.4.10-macos-arm64.tar.gz",
-      "sha256": "6c9081fb35d98c48fc52b3781fcfa6646a24d2c89859c96e2b162c3c15c0c285",
-      "version": "0.4.10"
-    },
-    "old": {
-      "tag": "v0.4.7",
-      "asset": "forge-0.4.7-macos-arm64.tar.gz",
-      "sha256": "063488e6383cd8d69d6a50fd6dff64655cbfc229713a7bbad3c2e98f19f282bc"
-    }
+ "macos-arm64": {
+  "new": {
+   "tag": "mac-check-1572",
+   "asset": "forge-0.4.10-macos-arm64.tar.gz",
+   "sha256": "df71abe81573361780570ed0cb15fac68aaa957b978b510d3c6b86680115acc3",
+   "version": "0.4.10"
   },
-  "macos-x64": {
-    "new": {
-      "tag": "mac-check-1572",
-      "asset": "forge-0.4.10-macos-x64.tar.gz",
-      "sha256": "14c7470d23d4ec96f36e440f294ba93be3e0fc64745dae1830b8bd02730dee5f",
-      "version": "0.4.10"
-    },
-    "old": {
-      "tag": "v0.4.7",
-      "asset": "forge-0.4.7-macos-x64.tar.gz",
-      "sha256": "2cd3760bc888445f53a1cfa0b190fa012fd0f6307f3638229b3221626df36d05"
-    }
+  "old": {
+   "tag": "v0.4.7",
+   "asset": "forge-0.4.7-macos-arm64.tar.gz",
+   "sha256": "063488e6383cd8d69d6a50fd6dff64655cbfc229713a7bbad3c2e98f19f282bc"
   }
+ },
+ "macos-x64": {
+  "new": {
+   "tag": "mac-check-1572",
+   "asset": "forge-0.4.10-macos-x64.tar.gz",
+   "sha256": "979c12938e3e3ab573e17f56a7c06c13bb1d1e8e30b457399a80347ca8087b97",
+   "version": "0.4.10"
+  },
+  "old": {
+   "tag": "v0.4.7",
+   "asset": "forge-0.4.7-macos-x64.tar.gz",
+   "sha256": "2cd3760bc888445f53a1cfa0b190fa012fd0f6307f3638229b3221626df36d05"
+  }
+ }
 }
