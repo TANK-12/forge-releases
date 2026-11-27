@@ -1,0 +1,180 @@
+{
+  "_about": "Outside programs Forge apps run (yt-dlp, ffmpeg) and how this computer gets them. A program on PATH is used as it is; otherwise, on a system with a build here, Forge fetches the build once (pinned by sha256, shared/forge_fetch.py) into its own tools folder (FORGE_TOOLS_DIR, else Forge's cache folder) and uses that. A system with no build keeps the install words in 'install'. packages: {id: {label, version, home, licence, systems: {target: {url, sha256, bytes, then file (a single program fetched as it is) or strip/keep (an archive unpacked), and programs: {program: path inside the package folder}}}}}; \"library\": true marks a build that is a library loaded in-process (zlib-classic), kept off PATH). Adding a program is one entry here; shared/forge_tools.py reads it.",
+  "packages": {
+    "yt-dlp": {
+      "label": "yt-dlp",
+      "version": "2026.10.26",
+      "home": "https://github.com/yt-dlp/yt-dlp",
+      "licence": "Unlicense",
+      "systems": {
+        "windows-x64": {
+          "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp.exe",
+          "sha256": "f5389d3698ecde4ef06f4e6b1ce0294fe9ac1396228c8990b8d3416d6d177a7d",
+          "bytes": 23575744,
+          "file": "yt-dlp.exe",
+          "programs": {"yt-dlp": "yt-dlp.exe"}
+        },
+        "linux-x64": {
+          "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp_linux",
+          "sha256": "767ba9dce7052aa196f8b12652f433d76de128ba168966fa84b6394d5e6c6795",
+          "bytes": 41166968,
+          "file": "yt-dlp",
+          "programs": {"yt-dlp": "yt-dlp"}
+        },
+        "macos-arm64": {
+          "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp_macos",
+          "sha256": "0f922c15ccc0b83eefa1c8bc9104e434318c4bf16e408e1ee93b7745a6efe0aa",
+          "bytes": 37466304,
+          "file": "yt-dlp",
+          "programs": {"yt-dlp": "yt-dlp"}
+        },
+        "macos-x64": {
+          "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/yt-dlp_macos",
+          "sha256": "0f922c15ccc0b83eefa1c8bc9104e434318c4bf16e408e1ee93b7745a6efe0aa",
+          "bytes": 37466304,
+          "file": "yt-dlp",
+          "programs": {"yt-dlp": "yt-dlp"}
+        }
+      }
+    },
+    "ffmpeg": {
+      "label": "ffmpeg",
+      "version": "9.0.2",
+      "home": "https://www.gyan.dev/ffmpeg/builds/",
+      "licence": "GPL-3.0 (the essentials build)",
+      "systems": {
+        "windows-x64": {
+          "url": "https://github.com/GyanD/codexffmpeg/releases/download/9.0.2/ffmpeg-9.0.2-essentials_build.zip",
+          "sha256": "60f467265b1e312373dbcd92200c2618a74850f98d3d078e94296bb3fa2047ba",
+          "bytes": 114768076,
+          "strip": 1,
+          "keep": ["bin/ffmpeg.exe", "bin/ffprobe.exe", "LICENSE"],
+          "programs": {"ffmpeg": "bin/ffmpeg.exe", "ffprobe": "bin/ffprobe.exe"}
+        }
+      }
+    },
+    "piper": {
+      "label": "Piper (offline speech)",
+      "version": "2023.11.14-2",
+      "home": "https://github.com/rhasspy/piper",
+      "licence": "MIT (bundles eSpeak NG, GPL-3.0; fetched on request, never shipped)",
+      "systems": {
+        "linux-x64": {
+          "url": "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz",
+          "sha256": "a50cb45f355b7af1f6d758c1b360717877ba0a398cc8cbe6d2a7a3a26e225992",
+          "bytes": 26460462,
+          "strip": 0,
+          "programs": {"piper": "piper/piper"}
+        },
+        "windows-x64": {
+          "url": "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_windows_amd64.zip",
+          "sha256": "f3c58906402b24f3a96d92145f58acba6d86c9b5db896d207f78dc80811efcea",
+          "bytes": 22477236,
+          "strip": 0,
+          "programs": {"piper": "piper/piper.exe"}
+        }
+      }
+    },
+    "whisper-cli": {
+      "label": "whisper.cpp",
+      "version": "b5454",
+      "home": "https://github.com/ggml-org/whisper.cpp",
+      "licence": "MIT",
+      "systems": {
+        "windows-x64": {
+          "url": "https://github.com/ggml-org/whisper.cpp/releases/download/b5454/whisper-bin-x64.zip",
+          "sha256": "6ba69e3482d7826214f90a6a9c84ca07782aec1e1d0c6a7c30c994fd5d816ccb",
+          "bytes": 8928640,
+          "strip": 1,
+          "keep": ["whisper-cli.exe", "whisper.dll", "ggml.dll", "ggml-base.dll", "ggml-cpu-*.dll"],
+          "programs": {"whisper-cli": "whisper-cli.exe"}
+        },
+        "linux-x64": {
+          "url": "https://github.com/ggml-org/whisper.cpp/releases/download/b5454/whisper-bin-ubuntu-x64.tar.gz",
+          "sha256": "a72becf15d7917f990f6313867a52638b82b7f9ef237fb0c980dac56a135781c",
+          "bytes": 10364195,
+          "strip": 1,
+          "keep": ["whisper-cli", "libwhisper.so*", "libggml*.so*", "LICENSE"],
+          "programs": {"whisper-cli": "whisper-cli"}
+        }
+      }
+    },
+    "libjxl": {
+      "label": "JPEG XL tools (cjxl & djxl)",
+      "version": "v0.11.2",
+      "home": "https://github.com/libjxl/libjxl",
+      "licence": "BSD-3-Clause",
+      "why_version": "v0.13.0's Windows zips use Deflate64, which Python's zipfile cannot unpack; v0.11.2 is the newest plain-Deflate Windows build (Relay task 1572)",
+      "systems": {
+        "windows-x64": {
+          "url": "https://github.com/libjxl/libjxl/releases/download/v0.11.2/jxl-x64-windows-static.zip",
+          "sha256": "97dc815bdd99ba243d8502050357342cf649251a5df069f8c3daee6828cbe0ce",
+          "bytes": 51669649,
+          "strip": 0,
+          "keep": ["bin/cjxl.exe", "bin/djxl.exe", "bin/LICENSE.*"],
+          "programs": {"cjxl": "bin/cjxl.exe", "djxl": "bin/djxl.exe"}
+        }
+      }
+    },
+    "zlib-classic": {
+      "label": "classic zlib (for Pack's exact PNG recipes)",
+      "version": "1.3.2-3",
+      "home": "https://zlib.net/",
+      "licence": "Zlib",
+      "why": "Python 3.14 for Windows is built with zlib-ng, whose deflate bytes differ from classic zlib's, so Pack's PNG recipes (shared/forge_deflate.py) load this classic zlib1.dll with ctypes there. MSYS2's own UCRT build, which needs only Windows' UCRT; zlib 1.2.12 to 1.4 write identical streams for every recipe setting (Relay task 1578)",
+      "systems": {
+        "windows-x64": {
+          "url": "https://repo.msys2.org/mingw/ucrt64/mingw-w64-ucrt-x86_64-zlib-1.3.2-3-any.pkg.tar.zst",
+          "sha256": "130e6ef04c654fc2150a177600aa5ed0035087665a893479d2c85ba7485d5704",
+          "bytes": 108848,
+          "strip": 0,
+          "keep": ["ucrt64/bin/zlib1.dll", "ucrt64/share/licenses/zlib/LICENSE"],
+          "library": true,
+          "programs": {"zlib-classic": "ucrt64/bin/zlib1.dll"}
+        }
+      }
+    }
+  },
+  "install": {
+    "cjxl": {
+      "linux": "install libjxl / libjxl-tools from your package manager",
+      "macos": "brew install jpeg-xl",
+      "windows": "Forge fetches libjxl's own build"
+    },
+    "djxl": {
+      "linux": "install libjxl / libjxl-tools from your package manager",
+      "macos": "brew install jpeg-xl",
+      "windows": "Forge fetches libjxl's own build"
+    },
+    "zlib-classic": {
+      "linux": "Python's own zlib is classic zlib on most systems; otherwise point FORGE_ZLIB_CLASSIC at a classic libz.so",
+      "macos": "Python's own zlib is classic zlib on most systems; otherwise point FORGE_ZLIB_CLASSIC at a classic libz.dylib",
+      "windows": "Forge fetches MSYS2's classic zlib1.dll"
+    },
+    "yt-dlp": {
+      "linux": "install yt-dlp from your package manager",
+      "macos": "brew install yt-dlp",
+      "windows": "winget install yt-dlp.yt-dlp"
+    },
+    "ffmpeg": {
+      "linux": "install ffmpeg from your package manager",
+      "macos": "brew install ffmpeg",
+      "windows": "winget install Gyan.FFmpeg"
+    },
+    "ffprobe": {
+      "linux": "install ffmpeg from your package manager",
+      "macos": "brew install ffmpeg",
+      "windows": "winget install Gyan.FFmpeg"
+    },
+    "piper": {
+      "linux": "download Piper from github.com/rhasspy/piper/releases",
+      "macos": "pip install piper-tts, which provides a piper command",
+      "windows": "download Piper from github.com/rhasspy/piper/releases"
+    },
+    "whisper-cli": {
+      "linux": "build whisper.cpp (github.com/ggml-org/whisper.cpp) and set FORGE_WHISPER_CLI to its whisper-cli",
+      "macos": "brew install whisper-cpp",
+      "windows": "Forge fetches whisper.cpp's own build"
+    }
+  }
+}

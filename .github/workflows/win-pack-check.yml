@@ -1,0 +1,27 @@
+# Test-only (Relay task 1578): Pack's exact PNG recipes on GitHub's Windows runner, with the
+# classic zlib fix laid over a Forge Windows download. Lives on the win-pack-check branch
+# only; main, win-check and the download page are untouched.
+name: Windows Pack check
+on:
+  push:
+    branches: [win-pack-check]
+  workflow_dispatch:
+permissions:
+  contents: write  # needed only to read a draft (unpublished) release
+jobs:
+  check:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check Pack's PNG recipes
+        shell: pwsh
+        run: ./win-pack-check/pack-check.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: win-pack-check
+          path: out
+          retention-days: 7
