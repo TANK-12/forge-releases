@@ -16,26 +16,26 @@ Website: https://openzenith.app/
 
 Issues: [report a problem here](https://github.com/TANK-12/forge-releases/issues/new) (say your Forge version and system).
 
-This repository holds only built files: the installers (release v0.4.9) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
+This repository holds only built files: the installers (release v0.4.10) and the update packs Forge downloads (the rolling 'Update packs' releases, with a list signed by the owner's key). The download page is https://tank-12.github.io/forge-releases/.
 
 ## Windows 10 and 11
 
-- [Forge-Web-Setup-0.4.9.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/Forge-Web-Setup-0.4.9.exe) (3 MB): Small setup: downloads only the apps you pick
-- [Forge-Setup-0.4.9.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/Forge-Setup-0.4.9.exe) (200 MB): Full setup: everything in one file, installs offline
+- [Forge-Web-Setup-0.4.10.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.10/Forge-Web-Setup-0.4.10.exe) (3 MB): Small setup: downloads only the apps you pick
+- [Forge-Setup-0.4.10.exe](https://github.com/TANK-12/forge-releases/releases/download/v0.4.10/Forge-Setup-0.4.10.exe) (204 MB): Full setup: everything in one file, installs offline
 
 ## Linux (x64)
 
-- [Forge-0.4.9-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/Forge-0.4.9-x86_64.AppImage) (261 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
-- [forge-get-0.4.9-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/forge-get-0.4.9-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
-- [forge-0.4.9-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.9/forge-0.4.9-linux-x64.tar.gz) (276 MB): Full download: unpack, then run ./Forge/forge --install
+- [Forge-0.4.10-x86_64.AppImage](https://github.com/TANK-12/forge-releases/releases/download/v0.4.10/Forge-0.4.10-x86_64.AppImage) (266 MB): Double-click to install: Forge goes into your apps menu, with the AI tools ticked
+- [forge-get-0.4.10-linux-x64.sh](https://github.com/TANK-12/forge-releases/releases/download/v0.4.10/forge-get-0.4.10-linux-x64.sh) (12 kB): Small installer script: downloads only the apps you pick
+- [forge-0.4.10-linux-x64.tar.gz](https://github.com/TANK-12/forge-releases/releases/download/v0.4.10/forge-0.4.10-linux-x64.tar.gz) (281 MB): Full download: unpack, then run ./Forge/forge --install
 
 ## Android 8.0 or newer
 
-- [forge.apk](https://github.com/TANK-12/forge-android/releases/latest/download/forge.apk): Open a few Forge apps on your phone over your home Wi-Fi, in the Forge app for Android or in the phone's own browser. Phones · Android APK or mobile browser (early preview) The APK comes from GitHub Releases; Android asks once to allow installs from your browser. In the app, pair with the address, check code and pairing code Devices shows: it trusts only your computer's own certificate and keeps no password. Checked in an Android emulator only.
+- [forge.apk](https://github.com/TANK-12/forge-android/releases/latest/download/forge.apk): Open Forge Home, Apps, Relay chat, Wallpaper, Computers, music widgets and the audio visualiser on your Android phone or tablet, or use the phone's own browser over home Wi-Fi or Tailscale. Phones · Forge for Android v0.22 APK or mobile browser The signed APK comes from GitHub Releases; Android asks once to allow installs from your browser, and installing a newer APK over an existing copy keeps your local settings. In the app, pair with the address and code Devices shows: it trusts only your computer's certificate and keeps no password.
 
 ## Phones
 
-Or skip the app and use the phone's browser. On the computer, open Devices, Phones and switch on Phone link; then open the address it shows in the phone's browser, type the pairing code and add the page to the home screen. The phone and the computer must be on the same Wi-Fi. The phone's browser first warns that the connection is not private, because the computer makes its own certificate: check the address is the one Devices shows, then go on to it. Not yet tried on a real phone.
+Or skip the app and use the phone's browser. On the computer, open Devices, Phones and switch on Phone link; then open the address it shows in the phone's browser, type the pairing code and add the page to the home screen. The phone and the computer must be on the same Wi-Fi.
 ## Installing on Linux
 
 Linux: double-click the .AppImage (if nothing happens, right-click it, Properties, and allow it to run as a program). It asks once, with the AI tools Claude Code, Codex and Gemini ticked, then installs Forge in your home folder and apps menu and opens it. No password is needed. Or paste this one line in a terminal, which does the same. For Forge alone, without the AI tools, add `-s -- --no-ai-tools` after `sh`.

@@ -3,6 +3,14 @@
  "title": "Forge news",
  "items": [
   {
+   "id": "new-app-pack-exact-photos-0.4.10",
+   "title": "New app: Pack \u2014 exact photo compression and encrypted vaults",
+   "summary": "Pack restores the exact original file byte for byte (verified by SHA-256) while shrinking real photos: about a third smaller than a ZIP on Linux with the JPEG XL tools, and JPEGs about 16% smaller on Windows (PNGs there follow in an update), alongside fast-unpack .fpack archives and Argon2id encrypted .fvlt vaults. Open Pack to run the live photo compression demo.",
+   "content_text": "Pack restores the exact original file byte for byte (verified by SHA-256) while shrinking real photos: about a third smaller than a ZIP on Linux with the JPEG XL tools, and JPEGs about 16% smaller on Windows (PNGs there follow in an update), alongside fast-unpack .fpack archives and Argon2id encrypted .fvlt vaults. Open Pack to run the live photo compression demo.",
+   "date_published": "2026-11-27T00:00:00Z",
+   "url": "forge:app/pack"
+  },
+  {
    "id": "app-install-updates-0.4.9",
    "title": "Cleaner app installs, uninstalls and updates",
    "summary": "Install, update, reinstall or roll back apps and Forge itself with live progress, offline cache support, and a clean uninstall dialog that keeps your data by default.",
