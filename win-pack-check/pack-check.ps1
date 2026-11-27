@@ -14,8 +14,19 @@ Note "INFO release $tag, $($os.Caption) $($os.Version)"
 $work = Join-Path $env:RUNNER_TEMP 'forge'
 New-Item -ItemType Directory -Force $work | Out-Null
 Set-Location $work
-$rel = gh api --paginate "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]' | ForEach-Object { $_ | ConvertFrom-Json } | Where-Object { $_.tag_name -eq $tag } | Select-Object -First 1
-if (-not $rel) { Note "FAIL download (no release $tag)"; exit 1 }
+# a draft being re-uploaded lacks files for a while: wait up to 40 minutes for both
+$ready = $false
+for ($attempt = 0; $attempt -lt 120; $attempt++) {
+  $rel = gh api --paginate "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]' | ForEach-Object { $_ | ConvertFrom-Json } | Where-Object { $_.tag_name -eq $tag } | Select-Object -First 1
+  $ready = [bool]$rel
+  foreach ($pattern in @('*-windows-x64.zip', 'SHA256SUMS')) {
+    if (-not ($rel.assets | Where-Object { $_.name -like $pattern -and $_.state -eq 'uploaded' })) { $ready = $false }
+  }
+  if ($ready) { break }
+  if ($attempt % 6 -eq 0) { Note "INFO waiting for $tag's zip and SHA256SUMS ($attempt)" }
+  Start-Sleep 20
+}
+if (-not $ready) { Note "FAIL download ($tag has no finished windows zip and SHA256SUMS)"; exit 1 }
 foreach ($pat in @('*-windows-x64.zip', 'SHA256SUMS')) {
   $a = $rel.assets | Where-Object { $_.name -like $pat } | Select-Object -First 1
   if (-not $a) { Note "FAIL download (no $pat in $tag)"; exit 1 }
