@@ -60,6 +60,12 @@ function Smoke($name, $dir, $data, $apps = '') {
 Smoke 'smoke-zip' $z.DirectoryName (Join-Path $work 'data-zip')
 $sentinels = @((Join-Path $env:APPDATA 'Forge\release-check-sentinel.txt'), (Join-Path $env:LOCALAPPDATA 'Forge\release-check-sentinel.txt'))
 foreach ($file in $sentinels) { New-Item -ItemType Directory -Force (Split-Path $file) | Out-Null; Set-Content $file 'preserve-existing-data-1381' }
+function CheckVersion($label, $dir) {
+  $want = $tag.TrimStart('v')
+  $file = Join-Path $dir 'release\release.json'
+  $got = if (Test-Path $file) { (Get-Content $file -Raw | ConvertFrom-Json).version } else { 'missing' }
+  if ($got -eq $want) { Note "PASS $label version $got" } else { Note "FAIL $label installed version $got, expected $want" }
+}
 function CheckData($label) {
   foreach ($file in $sentinels) {
     if ((Test-Path $file) -and (Get-Content $file -Raw).Trim() -eq 'preserve-existing-data-1381') { Note "PASS $label preserves $file" }
@@ -73,6 +79,7 @@ if ($i.ExitCode -eq 0 -and (Test-Path (Join-Path $dest 'forge_portable.py'))) { 
 $lnk = @("$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Forge.lnk") | Where-Object { Test-Path $_ }
 Note "INFO start menu shortcut: $(if ($lnk) { 'present' } else { 'missing' })"
 CheckData 'full setup'
+CheckVersion 'full setup' $dest
 Smoke 'smoke-installed' $dest (Join-Path $work 'data-installed')
 $env:PACK_DATA_DIR = Join-Path $work 'data-installed\PackData'
 $env:PACK_OUT_DIR = Join-Path $work 'data-installed\Packed'
@@ -92,6 +99,7 @@ $i = Start-Process -FilePath $web -ArgumentList @('/VERYSILENT', '/SUPPRESSMSGBO
 if ($i.ExitCode -eq 0 -and (Test-Path (Join-Path $webdest 'forge_portable.py'))) { Note "PASS web setup (exit 0)" }
 else { Note "FAIL web setup (exit $($i.ExitCode))"; exit 1 }
 CheckData 'web setup'
+CheckVersion 'web setup' $webdest
 # Exercise every selected app in small batches on the 4-core hosted runner.
 # The first cold web-setup run mass-started 68 imports and hit ready timeouts.
 $webapps = @(Get-ChildItem (Join-Path $webdest 'apps') -Filter 'forge_app.json' -Recurse | ForEach-Object { (Get-Content $_.FullName -Raw | ConvertFrom-Json).name } | Sort-Object -Unique)
