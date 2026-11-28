@@ -1,0 +1,27 @@
+# Test-only (Relay task 1583): Pack's Tensor-Train numeric stage on GitHub's Windows runner
+# using Forge's own v0.4.10 Windows Python runtime. Lives on win-tt-pack-check branch only;
+# main, win-check, win-pack-check, mac-check and the download page are untouched.
+name: Windows Tensor-Train Pack check
+on:
+  push:
+    branches: [win-tt-pack-check]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  check:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check Pack Tensor-Train stage on Windows
+        shell: pwsh
+        run: ./win-tt-pack-check/run.ps1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: win-tt-pack-check
+          path: out
+          retention-days: 7

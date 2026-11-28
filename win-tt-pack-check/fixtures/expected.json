@@ -1,0 +1,18 @@
+{
+  "lossless_sha256": {
+    "bundle.npz": "d3d69ea9b87a9c3f068ebb6936de4e3614262ed1dbf408c331684682f9883491",
+    "depth_128.pgm": "3145447ef20f8d4ce7c7e20632ad15226ca0cbf628d4dd59ad08c0aeb4189fd4",
+    "lut_128_f32.npy": "0906029a6999b01f6232f9dd0ae8b314db52f7efc0109f91c84621877c5c86f7",
+    "noise_64_f32.npy": "a3d2de820c9bbd0adcff8a82dc4ec59de982a6f663410a6a173e39bb932e6908",
+    "photo.jpg": "8e81733797e539b34f40a781b4aaac4ef613e75a1874d1da72ad6bdecd08a73e",
+    "physics_128_f64.npy": "7c4b0d37b0fc28584b0962dc9f438d80c26226b6fedd15d821d29ae74513d0c5"
+  },
+  "lossy_sha256": {
+    "bundle.npz": "ccedd8cbf9a26fd4e5adb319cb4185b9e94854734822d40ea5d5c5e85af16d68",
+    "depth_128.pgm": "b83606b8856f941fc29ec699466cdfecb317d2e698d3e05676ddecbd5d3a82fa",
+    "lut_128_f32.npy": "9d9bdc1bb1768ecf7bf184a558eb2fe820ba75ec7b6acc1bfaf0fd8834e1ebc6",
+    "noise_64_f32.npy": "a3d2de820c9bbd0adcff8a82dc4ec59de982a6f663410a6a173e39bb932e6908",
+    "photo.jpg": "8e81733797e539b34f40a781b4aaac4ef613e75a1874d1da72ad6bdecd08a73e",
+    "physics_128_f64.npy": "0b7891eca001c6837ec9f78e864a8281a545a606b8c3096d361d7162eed8dcee"
+  }
+}
